@@ -1,0 +1,16 @@
+INPUT(
+./debug\board.o
+./debug\chessbutton.o
+./debug\dialog.o
+./debug\dialogask.o
+./debug\gameplayer.o
+./debug\main.o
+./debug\mainwindow.o
+./debug\noticewidget.o
+./debug\qrc_MyImage.o
+./debug\moc_chessbutton.o
+./debug\moc_dialog.o
+./debug\moc_dialogask.o
+./debug\moc_mainwindow.o
+./debug\moc_noticewidget.o
+);

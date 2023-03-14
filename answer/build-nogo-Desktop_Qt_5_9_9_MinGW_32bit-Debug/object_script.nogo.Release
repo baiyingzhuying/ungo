@@ -1,0 +1,16 @@
+INPUT(
+./release\board.o
+./release\chessbutton.o
+./release\dialog.o
+./release\dialogask.o
+./release\gameplayer.o
+./release\main.o
+./release\mainwindow.o
+./release\noticewidget.o
+./release\qrc_MyImage.o
+./release\moc_chessbutton.o
+./release\moc_dialog.o
+./release\moc_dialogask.o
+./release\moc_mainwindow.o
+./release\moc_noticewidget.o
+);
