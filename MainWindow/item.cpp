@@ -4,7 +4,7 @@ Item::Item()
 {
 
 }
-Item::Item(QPoint pt ,bool bBlack)
+Item::Item(QPoint pt ,int bBlack)
 {
     m_pt=pt;
     m_bBlack=bBlack;

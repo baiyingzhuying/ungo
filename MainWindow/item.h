@@ -6,13 +6,13 @@ class Item
 {
 public:
     Item();
-    Item(QPoint pt,bool bBlack);
+    Item(QPoint pt,int bBlack);
     QPoint m_pt;//棋子坐标
     bool operator ==(const Item &t1) const
     {
         return (m_bBlack == t1.m_bBlack && m_pt == t1.m_pt);
     }
-    bool m_bBlack;//黑方还是白方下棋
+    int m_bBlack=0;//黑方还是白方下棋
 };
 
 #endif // ITEM_H

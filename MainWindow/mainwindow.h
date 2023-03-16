@@ -3,7 +3,7 @@
 #include<QVector>
 #include"item.h"
 #include <QMainWindow>
-
+#include<QMessageBox>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -17,12 +17,12 @@ public:
     ~MainWindow();
     void DrawCHessBroad();//绘制棋盘
     void DrawItems();//绘制棋子
-    QVector<Item> m_items;//记录我们的落子
-    bool m_bIsBlackTun;//记录落子颜色
+    int m_items[20][20];//记录我们的落子
+    int m_bIsBlackTun;//记录落子颜色
     int CountRoundItems(Item it,QPoint pt);
     void mousePressEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent *event);
-
+    bool check(int x,int y);
 
 
 private:
