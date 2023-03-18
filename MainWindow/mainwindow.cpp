@@ -87,12 +87,8 @@ void MainWindow::DrawItems() //画个棋子
         }
     }
 }
-//判断函数（待finish）
 bool MainWindow::check(int x,int y) {//不能下死手
-    bool visit[19][19];
-    memset(visit,0,sizeof(visit));
     int dx[4]={1,-1,0,0};
-    int jishu=0;
     int dy[4]={0,0,1,-1};
     visit[x][y]=true;
     for(int i=0;i<=3;i++) {
@@ -103,7 +99,10 @@ bool MainWindow::check(int x,int y) {//不能下死手
         }else {
             if(!visit[x+dx[i]][y+dy[i]]){
                 visit[x+dx[i]][y+dy[i]]=true;
-                return check(x+dx[i],y+dy[i]);
+                        if(check(x+dx[i],y+dy[i]))
+                        {
+                            return true;
+                        }
             }else {
                 continue;
             }
@@ -127,7 +126,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了�
     m_items[x][y]=m_bIsBlackTun;
     //判断是否赢。。。。。
     //判定四种情况。。。。。
-
+    memset(visit,0,sizeof(visit));
     if(check(x,y)==false) {
         QMessageBox::information(this,"final","you can't do this",QMessageBox::Yes);
     }
@@ -137,7 +136,6 @@ void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了�
     m_bIsBlackTun=1;
 
 }
-
 
 void MainWindow::paintEvent(QPaintEvent*)
 {
