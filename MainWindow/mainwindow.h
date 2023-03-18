@@ -23,7 +23,7 @@ public:
     void mousePressEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent *event);
     bool check(int x,int y);
-
+    bool visit[19][19];
 
 private:
     Ui::MainWindow *ui;
