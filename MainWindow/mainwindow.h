@@ -17,14 +17,16 @@ public:
     ~MainWindow();
     void DrawCHessBroad();//绘制棋盘
     void DrawItems();//绘制棋子
-    int m_items[20][20];//记录我们的落子
+    int m_items[190][100];//记录我们的落子
     int m_bIsBlackTun;//记录落子颜色
     int CountRoundItems(Item it,QPoint pt);
     void mousePressEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent *event);
-    bool check(int x,int y);
-    bool visit[19][19];
-
+    void check(int x,int y);//禁落点
+    void check2(int x,int y);//提子
+    void check3(int x,int y);//衍生品
+    bool zz=false,rr=false;
+    bool visit[1001][1001];
 private:
     Ui::MainWindow *ui;
 protected:

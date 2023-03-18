@@ -59,8 +59,7 @@ void MainWindow::DrawCHessBroad()//画个棋盘
 void MainWindow::DrawItems() //画个棋子
 {
     QPainter painter(this);
-    QPen pen(Qt::black);  // 设置边框为黑色
-    QBrush brush;
+
     for(int i=0; i<19; i++)
     {
         for(int j=0; j<19; j++)
@@ -87,30 +86,74 @@ void MainWindow::DrawItems() //画个棋子
         }
     }
 }
-bool MainWindow::check(int x,int y) {//不能下死手
+//判断函数（待finish）
+void MainWindow::check(int x,int y) {//不能下死手
+
     int dx[4]={1,-1,0,0};
-    int dy[4]={0,0,1,-1};
+    int dy[4]={0,0,1,-1};//四个方向
     visit[x][y]=true;
     for(int i=0;i<=3;i++) {
+        if(x+dx[i]>=0&&x+dx[i]<=ROWS&&y+dy[i]>=0&&y+dy[i]<=COLLON)
         if(m_items[x+dx[i]][y+dy[i]]==0) {
-            return true;
+            zz= true;//周围有空
+            return;
         }else if(m_items[x+dx[i]][y+dy[i]]!=m_items[x][y]) {
             continue;
         }else {
             if(!visit[x+dx[i]][y+dy[i]]){
                 visit[x+dx[i]][y+dy[i]]=true;
-                        if(check(x+dx[i],y+dy[i]))
-                        {
-                            return true;
-                        }
+                check(x+dx[i],y+dy[i]);
             }else {
                 continue;
             }
         }
-    }
-    return false;
-}
+    }//禁落点的判断
 
+    return;
+}
+void MainWindow::check3(int x,int y) {
+    qDebug()<<x<<y;
+    int dx[4]={1,-1,0,0};
+    int dy[4]={0,0,1,-1};//四个方向
+    visit[x][y]=true;
+    for(int i=0;i<=3;i++) {
+        if(x+dx[i]>=0&&x+dx[i]<=ROWS&&y+dy[i]>=0&&y+dy[i]<=COLLON)
+        if(m_items[x+dx[i]][y+dy[i]]==0) {
+            rr= true;//周围有空
+            return;
+        }else if(m_items[x+dx[i]][y+dy[i]]!=m_items[x][y]) {
+            continue;
+        }else {
+            if(!visit[x+dx[i]][y+dy[i]]){
+                visit[x+dx[i]][y+dy[i]]=true;
+                check3(x+dx[i],y+dy[i]);
+            }else {
+                continue;
+            }
+        }
+    }//禁落点的判断
+    return;
+}
+void MainWindow::check2(int x,int y) {//落子不吃子
+    int jishu3=0;
+    int dx[4]={1,-1,0,0};
+    int dy[4]={0,0,1,-1};//四个方向
+    for(int i=0;i<=3;i++) {
+        int x1=x+dx[i],y1=y+dy[i];
+        if(m_items[x1][y1]!=m_items[x][y]&&m_items[x1][y1]!=0 ){
+            check3(x1,y1);
+            if(rr==false) return;
+        }else if(m_items[x1][y1]==0||m_items[x1][y1]==m_items[x][y]){
+            jishu3++;
+        }else {
+            continue;
+        }
+    }
+    if(jishu3==4) {
+        rr=true;
+    }
+    return;
+}
 void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了，别动
 
     QPoint pt;
@@ -126,8 +169,12 @@ void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了�
     m_items[x][y]=m_bIsBlackTun;
     //判断是否赢。。。。。
     //判定四种情况。。。。。
+    zz=false,rr=false;
     memset(visit,0,sizeof(visit));
-    if(check(x,y)==false) {
+    check(x,y);
+    memset(visit,0,sizeof(visit));
+    check2(x,y);
+    if(zz==false||rr==false) {
         QMessageBox::information(this,"final","you can't do this",QMessageBox::Yes);
     }
     if(m_bIsBlackTun==1)
@@ -136,6 +183,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了�
     m_bIsBlackTun=1;
 
 }
+
 
 void MainWindow::paintEvent(QPaintEvent*)
 {
