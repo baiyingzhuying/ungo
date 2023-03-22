@@ -25,7 +25,8 @@
     </property>
     <property name="styleSheet">
      <string notr="true">#BackGround{
-border-image: url(:/new/prefix1/C:/Users/86188/Desktop/background.jpg);
+
+border-image: url(:/new/prefix1/image/background.jpg);
 }</string>
     </property>
     <property name="frameShape">
@@ -37,18 +38,21 @@ border-image: url(:/new/prefix1/C:/Users/86188/Desktop/background.jpg);
     <widget class="QPushButton" name="StartGame">
      <property name="geometry">
       <rect>
-       <x>540</x>
-       <y>500</y>
-       <width>141</width>
-       <height>31</height>
+       <x>670</x>
+       <y>490</y>
+       <width>161</width>
+       <height>41</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));</string>
      </property>
      <property name="text">
       <string/>
      </property>
      <property name="icon">
-      <iconset>
-       <normaloff>C:/Users/86188/Desktop/1679375058363.png</normaloff>C:/Users/86188/Desktop/1679375058363.png</iconset>
+      <iconset resource="image/bottom.qrc">
+       <normaloff>:/new/prefix2/visitor.png</normaloff>:/new/prefix2/visitor.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -60,42 +64,79 @@ border-image: url(:/new/prefix1/C:/Users/86188/Desktop/background.jpg);
     <widget class="QPushButton" name="YongHu">
      <property name="geometry">
       <rect>
-       <x>560</x>
+       <x>670</x>
        <y>390</y>
-       <width>131</width>
+       <width>161</width>
        <height>41</height>
       </rect>
      </property>
      <property name="text">
-      <string>用户登录</string>
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="image/bottom.qrc">
+       <normaloff>:/new/prefix2/login.png</normaloff>:/new/prefix2/login.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>150</width>
+       <height>40</height>
+      </size>
      </property>
     </widget>
     <widget class="QPushButton" name="Rules">
      <property name="geometry">
       <rect>
-       <x>550</x>
+       <x>690</x>
        <y>300</y>
-       <width>131</width>
+       <width>111</width>
        <height>41</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">border-image: url(:/new/prefix1/image/bottons.qrc);</string>
+     </property>
      <property name="text">
-      <string>游戏规则</string>
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="image/bottom.qrc">
+       <normaloff>:/new/prefix2/help.png</normaloff>:/new/prefix2/help.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>300</width>
+       <height>40</height>
+      </size>
      </property>
     </widget>
     <widget class="QPushButton" name="Group">
      <property name="geometry">
       <rect>
-       <x>540</x>
+       <x>670</x>
        <y>580</y>
-       <width>121</width>
+       <width>161</width>
        <height>41</height>
       </rect>
      </property>
      <property name="text">
-      <string>专业团队</string>
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="image/bottom.qrc">
+       <normaloff>:/new/prefix2/ourteam.png</normaloff>:/new/prefix2/ourteam.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>150</width>
+       <height>40</height>
+      </size>
      </property>
     </widget>
+    <zorder>Rules</zorder>
+    <zorder>YongHu</zorder>
+    <zorder>StartGame</zorder>
+    <zorder>Group</zorder>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -110,6 +151,8 @@ border-image: url(:/new/prefix1/C:/Users/86188/Desktop/background.jpg);
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <resources/>
+ <resources>
+  <include location="image/bottom.qrc"/>
+ </resources>
  <connections/>
 </ui>
