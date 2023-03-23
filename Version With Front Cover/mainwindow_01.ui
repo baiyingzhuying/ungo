@@ -25,8 +25,8 @@
     </property>
     <property name="styleSheet">
      <string notr="true">#BackGround{
+	border-image: url(:/picture/background.jpg);
 
-border-image: url(:/new/prefix1/image/background.jpg);
 }</string>
     </property>
     <property name="frameShape">
@@ -51,8 +51,8 @@ border-image: url(:/new/prefix1/image/background.jpg);
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="image/bottom.qrc">
-       <normaloff>:/new/prefix2/visitor.png</normaloff>:/new/prefix2/visitor.png</iconset>
+      <iconset resource="pic.qrc">
+       <normaloff>:/picture/visitor.png</normaloff>:/picture/visitor.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -61,30 +61,7 @@ border-image: url(:/new/prefix1/image/background.jpg);
       </size>
      </property>
     </widget>
-    <widget class="QPushButton" name="YongHu">
-     <property name="geometry">
-      <rect>
-       <x>670</x>
-       <y>390</y>
-       <width>161</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="image/bottom.qrc">
-       <normaloff>:/new/prefix2/login.png</normaloff>:/new/prefix2/login.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>150</width>
-       <height>40</height>
-      </size>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="Rules">
+    <widget class="QPushButton" name="help">
      <property name="geometry">
       <rect>
        <x>690</x>
@@ -100,8 +77,8 @@ border-image: url(:/new/prefix1/image/background.jpg);
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="image/bottom.qrc">
-       <normaloff>:/new/prefix2/help.png</normaloff>:/new/prefix2/help.png</iconset>
+      <iconset resource="pic.qrc">
+       <normaloff>:/picture/help.png</normaloff>:/picture/help.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -110,7 +87,7 @@ border-image: url(:/new/prefix1/image/background.jpg);
       </size>
      </property>
     </widget>
-    <widget class="QPushButton" name="Group">
+    <widget class="QPushButton" name="ourteam">
      <property name="geometry">
       <rect>
        <x>670</x>
@@ -123,8 +100,8 @@ border-image: url(:/new/prefix1/image/background.jpg);
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="image/bottom.qrc">
-       <normaloff>:/new/prefix2/ourteam.png</normaloff>:/new/prefix2/ourteam.png</iconset>
+      <iconset resource="pic.qrc">
+       <normaloff>:/picture/ourteam.png</normaloff>:/picture/ourteam.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -133,10 +110,33 @@ border-image: url(:/new/prefix1/image/background.jpg);
       </size>
      </property>
     </widget>
-    <zorder>Rules</zorder>
-    <zorder>YongHu</zorder>
+    <widget class="QPushButton" name="pushButton">
+     <property name="geometry">
+      <rect>
+       <x>670</x>
+       <y>390</y>
+       <width>161</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="pic.qrc">
+       <normaloff>:/picture/login.png</normaloff>:/picture/login.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>150</width>
+       <height>40</height>
+      </size>
+     </property>
+    </widget>
+    <zorder>help</zorder>
     <zorder>StartGame</zorder>
-    <zorder>Group</zorder>
+    <zorder>ourteam</zorder>
+    <zorder>pushButton</zorder>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -152,7 +152,7 @@ border-image: url(:/new/prefix1/image/background.jpg);
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources>
-  <include location="image/bottom.qrc"/>
+  <include location="pic.qrc"/>
  </resources>
  <connections/>
 </ui>
