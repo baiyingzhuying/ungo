@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow_01</class>
+ <widget class="QMainWindow" name="MainWindow_01">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>812</width>
+    <height>635</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QFrame" name="BackGround">
+    <property name="geometry">
+     <rect>
+      <x>-50</x>
+      <y>-70</y>
+      <width>961</width>
+      <height>771</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">#BackGround{
+	border-image: url(:/picture/background.jpg);
+
+}</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QPushButton" name="StartGame">
+     <property name="geometry">
+      <rect>
+       <x>670</x>
+       <y>490</y>
+       <width>161</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="pic.qrc">
+       <normaloff>:/picture/visitor.png</normaloff>:/picture/visitor.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>300</width>
+       <height>100</height>
+      </size>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="help">
+     <property name="geometry">
+      <rect>
+       <x>690</x>
+       <y>300</y>
+       <width>111</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-image: url(:/new/prefix1/image/bottons.qrc);</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="pic.qrc">
+       <normaloff>:/picture/help.png</normaloff>:/picture/help.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>300</width>
+       <height>40</height>
+      </size>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="ourteam">
+     <property name="geometry">
+      <rect>
+       <x>670</x>
+       <y>580</y>
+       <width>161</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="pic.qrc">
+       <normaloff>:/picture/ourteam.png</normaloff>:/picture/ourteam.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>150</width>
+       <height>40</height>
+      </size>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton">
+     <property name="geometry">
+      <rect>
+       <x>670</x>
+       <y>390</y>
+       <width>161</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="pic.qrc">
+       <normaloff>:/picture/login.png</normaloff>:/picture/login.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>150</width>
+       <height>40</height>
+      </size>
+     </property>
+    </widget>
+    <zorder>help</zorder>
+    <zorder>StartGame</zorder>
+    <zorder>ourteam</zorder>
+    <zorder>pushButton</zorder>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>812</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources>
+  <include location="pic.qrc"/>
+ </resources>
+ <connections/>
+</ui>
