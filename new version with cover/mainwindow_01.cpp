@@ -8,6 +8,20 @@ MainWindow_01::MainWindow_01(QWidget *parent) :
     ui(new Ui::MainWindow_01)
 {
     ui->setupUi(this);
+    connect(ui->StartGame,&QPushButton::clicked,this,[=](){
+        MainWindow * game= new MainWindow;
+        this->close();
+        game->show();
+
+    });
+    connect(ui->login,&QPushButton::clicked,this,[=](){
+        YongHu * user=new YongHu;
+        this->close();
+        user->show();
+
+
+    });
+
 }
 
 MainWindow_01::~MainWindow_01()
@@ -15,20 +29,6 @@ MainWindow_01::~MainWindow_01()
     delete ui;
 }
 
-void MainWindow_01::on_StartGame_clicked()
-{
-    MainWindow * game= new MainWindow;
-    this->close();
-    game->show();
-}
 
 
-
-
-void MainWindow_01::on_pushButton_clicked()
-{
-    YongHu * user=new YongHu;
-    this->close();
-    user->show();
-}
 
