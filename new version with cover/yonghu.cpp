@@ -8,6 +8,15 @@ YongHu::YongHu(QWidget *parent) :
     ui(new Ui::YongHu)
 {
     ui->setupUi(this);
+    connect(ui->tuichu,&QPushButton::clicked,this,[=](){
+        MainWindow_01 * window_01=new MainWindow_01;
+        this->close();
+        window_01->show();
+
+
+    });
+
+
     QString path ="E:/NoGo/NoGo";
     QSettings * config =new QSettings(path,QSettings::IniFormat);
 
@@ -38,18 +47,4 @@ YongHu::~YongHu()
 {
     delete ui;
 }
-
-
-
-
-
-
-
-void YongHu::on_pushButton_3_clicked()
-{
-    MainWindow_01 * window_01=new MainWindow_01;
-    this->close();
-    window_01->show();
-}
-
 
