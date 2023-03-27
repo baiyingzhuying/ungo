@@ -4,17 +4,17 @@
 #include<QSettings>
 #include<qapplication.h>
 #include<qmessagebox.h>
-
+QString Black_player="";
+QString White_player="";
+int haveblack=0;
+int havewhite=0;
 
 
 YongHu::YongHu(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::YongHu)
 {
-//    Black_player="";
-//    White_player="";
-//    haveblack=0;
-//    havewhite=0;
+
 
     ui->setupUi(this);
     connect(ui->tuichu,&QPushButton::clicked,this,[=](){
@@ -46,7 +46,7 @@ void YongHu::login_check_white(){
     if(settings.contains("users/"+yhm)){
         if(mm==settings.value(QString("users/%1").arg(yhm)).toString()){
             QMessageBox::information(this,"提示","登录成功！");
-            this->close();
+//            this->close();
             White_player=yhm;
             havewhite=1;
         }
@@ -70,7 +70,7 @@ void YongHu::login_check_black(){
     if(settings.contains("users/"+yhm)){
         if(mm==settings.value(QString("users/%1").arg(yhm)).toString()){
             QMessageBox::information(this,"提示","登录成功！");
-            this->close();
+//            this->close();
             Black_player=yhm;
             haveblack=1;
         }
