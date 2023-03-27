@@ -6,6 +6,10 @@
 #define CONFIGPATH (QCoreA)
 #include <QWidget>
 
+extern QString White_player;
+extern QString Black_player;
+extern int havewhite;
+extern int haveblack;
 
 namespace Ui {
 class YongHu;
@@ -23,10 +27,11 @@ public:
     void login_check_black();
     void login_check_white();
     void zhuce_check();
-    QString White_player;
-    QString Black_player;
-    int havewhite;
-    int haveblack;
+//    QString White_player;
+//    QString Black_player;
+//    int havewhite;
+//    int haveblack;
+    friend class MainWindow_01;
 
 
 
