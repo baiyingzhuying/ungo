@@ -27,9 +27,6 @@ MainWindow::MainWindow(QWidget *parent)
     resize(1000,1000);//初始化大小
     move(100,100);
     QFont font("Arial",16);
-    ui->CountDown->setFont(font);
-    ui->CountDown->setReadOnly(true);
-    ui->CountDown->appendPlainText(QString("倒计时"));
     m_bIsBlackTun=1;//初始化落子颜色
     memset(m_items,0,sizeof(m_items));
     //清空落子

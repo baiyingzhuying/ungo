@@ -268,7 +268,7 @@ bool MainWindow::start() {//开始
 bool MainWindow::restarted() {
     memset(m_items,0,sizeof(m_items));
     remaining_time=30;
-    remaining_time=ui->lcdNumber->value();
+    ui->lcdNumber->display(remaining_time);
     lb->hide();
     this->ui->restart->hide();
     m_bIsBlackTun=1;
@@ -276,6 +276,7 @@ bool MainWindow::restarted() {
     you_lose=false;
     you_giveup=false;
     out_of_timelimit=false;
+    time->start();
     return true;
 }
 void MainWindow::restat() {

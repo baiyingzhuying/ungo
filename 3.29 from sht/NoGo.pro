@@ -33,9 +33,14 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     button.qrc \
+    giveup.qrc \
+    mikubcg.qrc \
     newback.qrc \
     pic.qrc \
-    result.qrc
+    restart.qrc \
+    result.qrc \
+    start.qrc \
+    time.qrc
 
 DISTFILES += \
     image/help.png \

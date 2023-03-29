@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/new/prefix1">
+        <file>give-up.png</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>../../Library/Mobile Documents/com~apple~CloudDocs/restart.png</file>
+        <file>../../Library/Mobile Documents/com~apple~CloudDocs/start.png</file>
+    </qresource>
+</RCC>
