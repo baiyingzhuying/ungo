@@ -36,6 +36,9 @@ public:
     QPushButton *startButton;
     QWidget *widget_2;
     QWidget *widget_3;
+    QLabel *label_3;
+    QLabel *label_4;
+    QLabel *label_5;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -55,11 +58,11 @@ public:
         widget = new QWidget(centralwidget);
         widget->setObjectName("widget");
         widget->setGeometry(QRect(820, 470, 361, 261));
-        widget->setStyleSheet(QString::fromUtf8("background-image: url(:/new/prefix1/miku.png)\n"
+        widget->setStyleSheet(QString::fromUtf8("images: url(:/new/prefix1/miku.png)\n"
 ""));
         label = new QLabel(widget);
         label->setObjectName("label");
-        label->setGeometry(QRect(20, 60, 58, 16));
+        label->setGeometry(QRect(-10, -80, 461, 401));
         label->setPixmap(QPixmap(QString::fromUtf8(":/new/prefix1/miku.png")));
         lcdNumber = new QLCDNumber(centralwidget);
         lcdNumber->setObjectName("lcdNumber");
@@ -76,22 +79,37 @@ public:
         restart_2 = new QWidget(centralwidget);
         restart_2->setObjectName("restart_2");
         restart_2->setGeometry(QRect(830, 230, 120, 80));
-        restart_2->setStyleSheet(QString::fromUtf8("image:url(:/new/prefix1/restart.png)"));
+        restart_2->setStyleSheet(QString::fromUtf8("images:url(:/new/prefix1/restart.png)"));
         startButton = new QPushButton(centralwidget);
         startButton->setObjectName("startButton");
         startButton->setGeometry(QRect(840, 160, 93, 51));
         widget_2 = new QWidget(centralwidget);
         widget_2->setObjectName("widget_2");
         widget_2->setGeometry(QRect(820, 150, 120, 80));
-        widget_2->setStyleSheet(QString::fromUtf8("image:url(:/new/prefix1/start.png)"));
+        widget_2->setStyleSheet(QString::fromUtf8("images:url(:/new/prefix1/start.png)"));
         widget_3 = new QWidget(centralwidget);
         widget_3->setObjectName("widget_3");
         widget_3->setGeometry(QRect(830, 80, 120, 80));
-        widget_3->setStyleSheet(QString::fromUtf8("image:url(:/new/prefix1/give-up.png)"));
+        widget_3->setStyleSheet(QString::fromUtf8("images:url(:/new/prefix1/give-up.png)"));
+        label_3 = new QLabel(centralwidget);
+        label_3->setObjectName("label_3");
+        label_3->setGeometry(QRect(860, 110, 71, 21));
+        label_3->setPixmap(QPixmap(QString::fromUtf8(":/new/prefix1/give-up.png")));
+        label_4 = new QLabel(centralwidget);
+        label_4->setObjectName("label_4");
+        label_4->setGeometry(QRect(860, 170, 61, 21));
+        label_4->setPixmap(QPixmap(QString::fromUtf8(":/new/prefix1/start.png")));
+        label_5 = new QLabel(centralwidget);
+        label_5->setObjectName("label_5");
+        label_5->setGeometry(QRect(860, 250, 71, 31));
+        label_5->setPixmap(QPixmap(QString::fromUtf8(":/new/prefix1/restart.png")));
         MainWindow->setCentralWidget(centralwidget);
+        label_5->raise();
+        label_4->raise();
+        label_3->raise();
+        restart_2->raise();
         widget_2->raise();
         widget_3->raise();
-        restart_2->raise();
         quitButton->raise();
         restart->raise();
         widget->raise();
@@ -100,7 +118,7 @@ public:
         startButton->raise();
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
-        menubar->setGeometry(QRect(0, 0, 1049, 22));
+        menubar->setGeometry(QRect(0, 0, 1049, 36));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");
@@ -119,6 +137,9 @@ public:
         label->setText(QString());
         label_2->setText(QString());
         startButton->setText(QString());
+        label_3->setText(QString());
+        label_4->setText(QString());
+        label_5->setText(QString());
     } // retranslateUi
 
 };
