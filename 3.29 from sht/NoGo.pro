@@ -38,7 +38,9 @@ RESOURCES += \
     newback.qrc \
     pic.qrc \
     restart.qrc \
+    restart.qrc \
     result.qrc \
+    start.qrc \
     start.qrc \
     time.qrc
 

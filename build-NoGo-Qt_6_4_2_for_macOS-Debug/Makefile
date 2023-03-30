@@ -615,7 +615,7 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents ../3.29\ from\ sht/button.qrc ../3.29\ from\ sht/giveup.qrc ../3.29\ from\ sht/mikubcg.qrc ../3.29\ from\ sht/newback.qrc ../3.29\ from\ sht/pic.qrc ../3.29\ from\ sht/restart.qrc ../3.29\ from\ sht/result.qrc ../3.29\ from\ sht/start.qrc ../3.29\ from\ sht/time.qrc $(DISTDIR)/
+	$(COPY_FILE) --parents ../3.29\ from\ sht/button.qrc ../3.29\ from\ sht/giveup.qrc ../3.29\ from\ sht/mikubcg.qrc ../3.29\ from\ sht/newback.qrc ../3.29\ from\ sht/pic.qrc ../3.29\ from\ sht/restart.qrc ../3.29\ from\ sht/restart.qrc ../3.29\ from\ sht/result.qrc ../3.29\ from\ sht/start.qrc ../3.29\ from\ sht/start.qrc ../3.29\ from\ sht/time.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents ../3.29\ from\ sht/item.h ../3.29\ from\ sht/mainwindow.h ../3.29\ from\ sht/mainwindow_01.h ../3.29\ from\ sht/yonghu.h $(DISTDIR)/
 	$(COPY_FILE) --parents ../3.29\ from\ sht/item.cpp ../3.29\ from\ sht/main.cpp ../3.29\ from\ sht/mainwindow.cpp ../3.29\ from\ sht/mainwindow_01.cpp ../3.29\ from\ sht/yonghu.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../3.29\ from\ sht/mainwindow.ui ../3.29\ from\ sht/mainwindow_01.ui ../3.29\ from\ sht/yonghu.ui $(DISTDIR)/
@@ -645,9 +645,9 @@ check: first
 
 benchmark: first
 
-compiler_rcc_make_all: qrc_button.cpp qrc_giveup.cpp qrc_mikubcg.cpp qrc_newback.cpp qrc_pic.cpp qrc_restart.cpp qrc_result.cpp qrc_start.cpp qrc_time.cpp
+compiler_rcc_make_all: qrc_button.cpp qrc_giveup.cpp qrc_mikubcg.cpp qrc_newback.cpp qrc_pic.cpp qrc_restart.cpp qrc_restart.cpp qrc_result.cpp qrc_start.cpp qrc_start.cpp qrc_time.cpp
 compiler_rcc_clean:
-	-$(DEL_FILE) qrc_button.cpp qrc_giveup.cpp qrc_mikubcg.cpp qrc_newback.cpp qrc_pic.cpp qrc_restart.cpp qrc_result.cpp qrc_start.cpp qrc_time.cpp
+	-$(DEL_FILE) qrc_button.cpp qrc_giveup.cpp qrc_mikubcg.cpp qrc_newback.cpp qrc_pic.cpp qrc_restart.cpp qrc_restart.cpp qrc_result.cpp qrc_start.cpp qrc_start.cpp qrc_time.cpp
 qrc_button.cpp: ../3.29\ from\ sht/button.qrc \
 		../../Qt/6.4.2/macos/libexec/rcc \
 		../3.29\ from\ sht/Volume.png \
@@ -656,8 +656,6 @@ qrc_button.cpp: ../3.29\ from\ sht/button.qrc \
 
 qrc_giveup.cpp: ../3.29\ from\ sht/giveup.qrc \
 		../../Qt/6.4.2/macos/libexec/rcc \
-		../../Library/Mobile\ Documents/com~apple~CloudDocs/start.png \
-		../../Library/Mobile\ Documents/com~apple~CloudDocs/restart.png \
 		../3.29\ from\ sht/give-up.png
 	/Users/baiyingzhuying/Qt/6.4.2/macos/libexec/rcc -name giveup --no-zstd ../3.29\ from\ sht/giveup.qrc -o qrc_giveup.cpp
 
@@ -687,6 +685,11 @@ qrc_restart.cpp: ../3.29\ from\ sht/restart.qrc \
 		../3.29\ from\ sht/restart.png
 	/Users/baiyingzhuying/Qt/6.4.2/macos/libexec/rcc -name restart --no-zstd ../3.29\ from\ sht/restart.qrc -o qrc_restart.cpp
 
+qrc_restart.cpp: ../3.29\ from\ sht/restart.qrc \
+		../../Qt/6.4.2/macos/libexec/rcc \
+		../3.29\ from\ sht/restart.png
+	/Users/baiyingzhuying/Qt/6.4.2/macos/libexec/rcc -name restart --no-zstd ../3.29\ from\ sht/restart.qrc -o qrc_restart.cpp
+
 qrc_result.cpp: ../3.29\ from\ sht/result.qrc \
 		../../Qt/6.4.2/macos/libexec/rcc \
 		../3.29\ from\ sht/lost.jpg \
@@ -695,7 +698,13 @@ qrc_result.cpp: ../3.29\ from\ sht/result.qrc \
 	/Users/baiyingzhuying/Qt/6.4.2/macos/libexec/rcc -name result --no-zstd ../3.29\ from\ sht/result.qrc -o qrc_result.cpp
 
 qrc_start.cpp: ../3.29\ from\ sht/start.qrc \
-		../../Qt/6.4.2/macos/libexec/rcc
+		../../Qt/6.4.2/macos/libexec/rcc \
+		../3.29\ from\ sht/start.png
+	/Users/baiyingzhuying/Qt/6.4.2/macos/libexec/rcc -name start --no-zstd ../3.29\ from\ sht/start.qrc -o qrc_start.cpp
+
+qrc_start.cpp: ../3.29\ from\ sht/start.qrc \
+		../../Qt/6.4.2/macos/libexec/rcc \
+		../3.29\ from\ sht/start.png
 	/Users/baiyingzhuying/Qt/6.4.2/macos/libexec/rcc -name start --no-zstd ../3.29\ from\ sht/start.qrc -o qrc_start.cpp
 
 qrc_time.cpp: ../3.29\ from\ sht/time.qrc \

@@ -26,17 +26,16 @@ class Ui_MainWindow
 public:
     QWidget *centralwidget;
     QPushButton *quitButton;
-    QPushButton *startButton;
     QPushButton *restart;
     QWidget *widget;
     QLabel *label;
     QLCDNumber *lcdNumber;
     QWidget *time;
     QLabel *label_2;
-    QWidget *widget_2;
-    QWidget *start;
-    QWidget *widget_3;
     QWidget *restart_2;
+    QPushButton *startButton;
+    QWidget *widget_2;
+    QWidget *widget_3;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -50,9 +49,6 @@ public:
         quitButton = new QPushButton(centralwidget);
         quitButton->setObjectName("quitButton");
         quitButton->setGeometry(QRect(840, 100, 91, 41));
-        startButton = new QPushButton(centralwidget);
-        startButton->setObjectName("startButton");
-        startButton->setGeometry(QRect(840, 170, 93, 51));
         restart = new QPushButton(centralwidget);
         restart->setObjectName("restart");
         restart->setGeometry(QRect(840, 240, 93, 51));
@@ -77,35 +73,34 @@ public:
         label_2->setObjectName("label_2");
         label_2->setGeometry(QRect(0, 20, 58, 191));
         label_2->setPixmap(QPixmap(QString::fromUtf8(":/new/prefix1/time.png")));
-        widget_2 = new QWidget(centralwidget);
-        widget_2->setObjectName("widget_2");
-        widget_2->setGeometry(QRect(790, 80, 181, 81));
-        widget_2->setStyleSheet(QString::fromUtf8("image:url(:/new/prefix1/give-up.png)"));
-        start = new QWidget(centralwidget);
-        start->setObjectName("start");
-        start->setGeometry(QRect(820, 160, 120, 80));
-        start->setStyleSheet(QString::fromUtf8("image:url(:/Library/Mobile Documents/com~apple~CloudDocs/start.png)"));
-        widget_3 = new QWidget(start);
-        widget_3->setObjectName("widget_3");
-        widget_3->setGeometry(QRect(10, 70, 120, 80));
-        widget_3->setStyleSheet(QString::fromUtf8("image:url(:/Library/Mobile Documents/com~apple~CloudDocs/restart.png)"));
         restart_2 = new QWidget(centralwidget);
         restart_2->setObjectName("restart_2");
         restart_2->setGeometry(QRect(830, 230, 120, 80));
-        restart_2->setStyleSheet(QString::fromUtf8("image:url(:/Library/Mobile Documents/com~apple~CloudDocs/restart.png)"));
+        restart_2->setStyleSheet(QString::fromUtf8("image:url(:/new/prefix1/restart.png)"));
+        startButton = new QPushButton(centralwidget);
+        startButton->setObjectName("startButton");
+        startButton->setGeometry(QRect(840, 160, 93, 51));
+        widget_2 = new QWidget(centralwidget);
+        widget_2->setObjectName("widget_2");
+        widget_2->setGeometry(QRect(820, 150, 120, 80));
+        widget_2->setStyleSheet(QString::fromUtf8("image:url(:/new/prefix1/start.png)"));
+        widget_3 = new QWidget(centralwidget);
+        widget_3->setObjectName("widget_3");
+        widget_3->setGeometry(QRect(830, 80, 120, 80));
+        widget_3->setStyleSheet(QString::fromUtf8("image:url(:/new/prefix1/give-up.png)"));
         MainWindow->setCentralWidget(centralwidget);
-        restart_2->raise();
-        start->raise();
         widget_2->raise();
+        widget_3->raise();
+        restart_2->raise();
         quitButton->raise();
-        startButton->raise();
         restart->raise();
         widget->raise();
         lcdNumber->raise();
         time->raise();
+        startButton->raise();
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName("menubar");
-        menubar->setGeometry(QRect(0, 0, 1049, 36));
+        menubar->setGeometry(QRect(0, 0, 1049, 22));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName("statusbar");
@@ -120,10 +115,10 @@ public:
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
         quitButton->setText(QString());
-        startButton->setText(QString());
         restart->setText(QString());
         label->setText(QString());
         label_2->setText(QString());
+        startButton->setText(QString());
     } // retranslateUi
 
 };

@@ -27,19 +27,6 @@
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="startButton">
-    <property name="geometry">
-     <rect>
-      <x>840</x>
-      <y>170</y>
-      <width>93</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
    <widget class="QPushButton" name="restart">
     <property name="geometry">
      <rect>
@@ -125,45 +112,6 @@
      </property>
     </widget>
    </widget>
-   <widget class="QWidget" name="widget_2" native="true">
-    <property name="geometry">
-     <rect>
-      <x>790</x>
-      <y>80</y>
-      <width>181</width>
-      <height>81</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">image:url(:/new/prefix1/give-up.png)</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="start" native="true">
-    <property name="geometry">
-     <rect>
-      <x>820</x>
-      <y>160</y>
-      <width>120</width>
-      <height>80</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">image:url(:/Library/Mobile Documents/com~apple~CloudDocs/start.png)</string>
-    </property>
-    <widget class="QWidget" name="widget_3" native="true">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>70</y>
-       <width>120</width>
-       <height>80</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">image:url(:/Library/Mobile Documents/com~apple~CloudDocs/restart.png)</string>
-     </property>
-    </widget>
-   </widget>
    <widget class="QWidget" name="restart_2" native="true">
     <property name="geometry">
      <rect>
@@ -174,18 +122,57 @@
      </rect>
     </property>
     <property name="styleSheet">
-     <string notr="true">image:url(:/Library/Mobile Documents/com~apple~CloudDocs/restart.png)</string>
+     <string notr="true">image:url(:/new/prefix1/restart.png)</string>
     </property>
    </widget>
-   <zorder>restart_2</zorder>
-   <zorder>start</zorder>
+   <widget class="QPushButton" name="startButton">
+    <property name="geometry">
+     <rect>
+      <x>840</x>
+      <y>160</y>
+      <width>93</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QWidget" name="widget_2" native="true">
+    <property name="geometry">
+     <rect>
+      <x>820</x>
+      <y>150</y>
+      <width>120</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">image:url(:/new/prefix1/start.png)</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="widget_3" native="true">
+    <property name="geometry">
+     <rect>
+      <x>830</x>
+      <y>80</y>
+      <width>120</width>
+      <height>80</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">image:url(:/new/prefix1/give-up.png)</string>
+    </property>
+   </widget>
    <zorder>widget_2</zorder>
+   <zorder>widget_3</zorder>
+   <zorder>restart_2</zorder>
    <zorder>quitButton</zorder>
-   <zorder>startButton</zorder>
    <zorder>restart</zorder>
    <zorder>widget</zorder>
    <zorder>lcdNumber</zorder>
    <zorder>time</zorder>
+   <zorder>startButton</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -193,7 +180,7 @@
      <x>0</x>
      <y>0</y>
      <width>1049</width>
-     <height>36</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
