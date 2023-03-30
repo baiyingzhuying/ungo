@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
     HEIGHT=LIMIT_WIDTH/COLLON;
     WIDTH=LIMIT_HEIGHT/ROW;
     ui->setupUi(this);
-    resize(1000,1000);//初始化大小
+    this->setFixedSize(1050,850);
     move(100,100);
     QFont font("Arial",16);
     m_bIsBlackTun=1;//初始化落子颜色
@@ -180,7 +180,7 @@ void MainWindow::check2(int x,int y) {//落子不吃子
         rr=true;
     return;
     }
-    if(jishu3==2&&(x==1&&y==COLLON+1)||(x==1&&y==1)||(x==1&&y==ROW+1)||(x==COLLON+1&&y==COLLON+1)){
+    if(jishu3==2&&(x==COLLON+1&&y==1)||(x==1&&y==1)||(x==1&&y==ROW+1)||(x==COLLON+1&&y==COLLON+1)){
         rr=true;
         return;
     }
@@ -194,7 +194,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了�
     int chess_y=event->pos().y()+HEIGHT/2;//y坐标
     pt.setX(chess_x/WIDTH);//设置x坐标
     pt.setY(chess_y/HEIGHT);//y坐标
-    if(pt.x()>=15||pt.y()>=15||pt.x()<1||pt.y()<1) {
+    if(pt.x()>ROW+1||pt.y()>ROW+1||pt.x()<1||pt.y()<1) {
         return;
     }
     //循环所有棋子判断落子出是否存在棋子
