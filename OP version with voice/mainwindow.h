@@ -28,32 +28,51 @@ public:
 
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void DrawCHessBroad();//绘制棋盘
+    //判断胜负
+    //==-------------------
     bool yougiveup();//放弃的函数
     bool you_giveup;//已经放弃
     bool you_lose;//输了
     bool out_of_timelimit;//超时
     bool zz=false,rr=false;//非法落子
+    void check(int x,int y);//禁落点
+    void check2(int x,int y);//提子
+    void check3(int x,int y);//衍生品（用于check2())
     bool allow_start;//允许开始
+    //---------------------
     QLabel *lb;
     QImage pool;
     QLabel *label;
-    bool restarted();
+    //用于显示图像的一些变量
+    //---------------------
+    void DrawCHessBroad();//绘制棋盘
     void DrawItems();//绘制棋子
     int m_items[190][100];//记录我们的落子
     int m_bIsBlackTun;//记录落子颜色
     int CountRoundItems(Item it,QPoint pt);
     void mousePressEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent *event);
-    void check(int x,int y);//禁落点
-    void check2(int x,int y);//提子
-    void check3(int x,int y);//衍生品
+    //绘图
+    //---------------------
+    //底层
     QTimer *time;
-    bool pressed;
+    bool pressed;//落子
     bool visit[1001][1001];
-    double remaining_time;
-    bool start();
-    void restat();
+    double remaining_time;//剩余时间
+    bool start();//开始
+    void restat();//重开
+    bool restarted();//重开
+    QPoint lastMove;
+    int jishu=0;
+    struct node {
+        int colors;
+        int p_x;
+        int p_y;
+        int steps;
+    }items[20*20];
+    bool save();//存储
+    bool read_in();//读入
+    int m_steps[20][20];//记录步数
     bool IsVolume;
 
 public slots:

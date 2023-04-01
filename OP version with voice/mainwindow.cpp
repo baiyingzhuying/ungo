@@ -45,6 +45,8 @@ MainWindow::MainWindow(QWidget *parent)
     time->stop();
     time->setInterval(100);
     this->ui->restart->hide();
+    connect(this->ui->savebutton,&QPushButton::clicked,this,&MainWindow::save);
+    connect(this->ui->reproduce,&QPushButton::clicked,this,&MainWindow::read_in);
     connect(time,&QTimer::timeout,this,&MainWindow::on_time);//开始倒计时
     connect(this->ui->quitButton,&QPushButton::clicked,this,&MainWindow::yougiveup);
     connect(this->ui->startButton,&QPushButton::clicked,this,&MainWindow::start);
@@ -83,6 +85,18 @@ void MainWindow::DrawCHessBroad()//画个棋盘
         {
             painter.drawRect((i+1)*WIDTH, (j+1)*HEIGHT, WIDTH, HEIGHT);
         }
+    }
+    QFont font("Arial", 12);
+    painter.setFont(font);
+
+    // 绘制行数字
+    for(int i = 0; i <= ROWS; i++) {
+        painter.drawText(QRectF((i+0.8)*WIDTH, 0, WIDTH, HEIGHT),  QString::number(i+1));
+    }
+
+    // 绘制列字母
+    for(int i = 0; i <= COLLON; i++) {
+        painter.drawText(QRectF(0, (i+0.8)*HEIGHT, WIDTH, HEIGHT),  QString(QChar('A' + i)));
     }
 
 }
@@ -127,7 +141,23 @@ void MainWindow::DrawItems() //画个棋子
 //            painter.setBrush(Qt::NoBrush);
 //            painter.setPen(Qt::NoPen);
 //            painter.drawEllipse(innerRect);
+            if(reproduced){
 
+            if(m_steps[i][j]>0) {
+                painter.setPen(Qt::red);
+                QFont font=painter.font();
+                font.setPointSize(14);
+                painter.setFont(font);
+                QString stepStr=QString::number(m_steps[i][j]);
+                if(m_steps[i][j]<10){
+                    QPoint ptText = ptCenter - QPoint(WIDTH * 20/100, -HEIGHT * 20/100);
+                    painter.drawText(ptText, stepStr);
+                }else {
+                    QPoint ptText = ptCenter - QPoint(WIDTH * 40/100, -HEIGHT * 20/100);
+                    painter.drawText(ptText, stepStr);
+                }
+            }
+            }
 
         }
     }
@@ -187,7 +217,7 @@ void MainWindow::check2(int x,int y) {//落子不吃子
     int dy[4]={0,0,1,-1};//四个方向
     for(int i=0;i<=3;i++) {
         int x1=x+dx[i],y1=y+dy[i];
-        if(x+dx[i]>0&&x+dx[i]<=ROW+1&&y+dy[i]>0&&y+dy[i]<=COLLON+1){
+        if(x+dx[i]>0&&x+dx[i]<=ROWS+1&&y+dy[i]>0&&y+dy[i]<=COLLON+1){
         if(m_items[x1][y1]!=m_items[x][y]&&m_items[x1][y1]!=0 ){
             rr=false;
             check3(x1,y1);
@@ -203,11 +233,11 @@ void MainWindow::check2(int x,int y) {//落子不吃子
         rr=true;
         return;
     }
-    if(jishu3==3&&((x==1&&y!=COLLON+1&&y!=1)||(y!=1&&y!=COLLON+1&&x==ROW+1)||(y==1&&x!=COLLON+1&&x!=1)||(x!=1&&x!=COLLON+1&&y==ROW+1))){
+    if(jishu3==3&&((x==1&&y!=COLLON+1&&y!=1)||(y!=1&&y!=COLLON+1&&x==ROWS+1)||(y==1&&x!=COLLON+1&&x!=1)||(x!=1&&x!=COLLON+1&&y==ROWS+1))){
         rr=true;
     return;
     }
-    if(jishu3==2&&(x==COLLON+1&&y==1)||(x==1&&y==1)||(x==1&&y==ROW+1)||(x==COLLON+1&&y==COLLON+1)){
+    if(jishu3==2&&(x==COLLON+1&&y==1)||(x==1&&y==1)||(x==1&&y==ROWS+1)||(x==COLLON+1&&y==COLLON+1)){
         rr=true;
         return;
     }
@@ -226,6 +256,9 @@ void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了�
     }
     //循环所有棋子判断落子出是否存在棋子
     if(m_items[pt.x()][pt.y()]!=0) return;
+    items[jishu]=node{m_bIsBlackTun,pt.x(),pt.y(),jishu};
+    lastMove=QPoint(pt.x(),pt.y());
+    jishu++;
     Item item(pt,m_bIsBlackTun);
 
     int random=0;
@@ -355,7 +388,54 @@ bool MainWindow::restarted() {
 void MainWindow::restat() {
     this->ui->restart->show();
 }
+bool MainWindow::save() {//存储程序
+    QFile file("items.txt");
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qDebug() << "Failed to open file";
+        return false;
+    }
 
+    QTextStream out(&file);
+    for (int i = 0; i < ROWS; ++i) {
+        for (int j = 0; j < COLLON; ++j) {
+            out << m_items[i][j] << " ";
+        }
+        out << "\n";
+    }
+    file.close();
+    QString currentPath = QDir::currentPath();
+    qDebug() << "Current working directory: " << currentPath;
+    return true;
+}
+
+bool MainWindow::read_in() {//复盘程序
+    reproduced=true;
+    this->lb->hide();
+    QFile file("items.txt");
+    if (!file.exists()) {
+        qDebug() << "File not found.";
+        return false;
+    }
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Failed to open file";
+        return false;
+    }
+
+    QTextStream in(&file);
+    memset(m_items,0,sizeof(m_items));
+    for (int i = 0; i < ROWS; ++i) {
+        for (int j = 0; j < COLLON; ++j) {
+            if (in.status() != QTextStream::Ok) {
+                qDebug() << "Failed to read value at row " << i << " column " << j;
+                file.close();
+                return false;
+            }
+            in >> m_items[i][j];
+        }
+    }
+    file.close();
+    return true;
+}
 
 
 void MainWindow::paintEvent(QPaintEvent*)

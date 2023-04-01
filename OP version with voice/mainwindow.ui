@@ -225,6 +225,32 @@ image: url(:/new/prefix1/start.png);}</string>
      <pixmap resource="restart.qrc">:/new/prefix1/restart.png</pixmap>
     </property>
    </widget>
+   <widget class="QPushButton" name="savebutton">
+    <property name="geometry">
+     <rect>
+      <x>840</x>
+      <y>30</y>
+      <width>93</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>存储</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="reproduce">
+    <property name="geometry">
+     <rect>
+      <x>720</x>
+      <y>70</y>
+      <width>93</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>复盘</string>
+    </property>
+   </widget>
    <zorder>label_5</zorder>
    <zorder>label_4</zorder>
    <zorder>label_3</zorder>
@@ -237,6 +263,8 @@ image: url(:/new/prefix1/start.png);}</string>
    <zorder>lcdNumber</zorder>
    <zorder>time</zorder>
    <zorder>startButton</zorder>
+   <zorder>savebutton</zorder>
+   <zorder>reproduce</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -244,18 +272,18 @@ image: url(:/new/prefix1/start.png);}</string>
      <x>0</x>
      <y>0</y>
      <width>1049</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources>
-  <include location="giveup.qrc"/>
-  <include location="mikubcg.qrc"/>
   <include location="restart.qrc"/>
-  <include location="time.qrc"/>
+  <include location="giveup.qrc"/>
   <include location="start.qrc"/>
+  <include location="time.qrc"/>
+  <include location="mikubcg.qrc"/>
  </resources>
  <connections/>
 </ui>
