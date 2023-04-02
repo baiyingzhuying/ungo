@@ -7,6 +7,7 @@
 #include<QPoint>
 #include<QtCore/qmath.h>
 #include<QLabel>
+#include<qpropertyanimation.h>
 #define LIMIT_WIDTH 700
 #define LIMIT_HEIGHT 700
 
@@ -221,14 +222,21 @@ void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了�
         lb->setGeometry(20, 20, 400, 400); // set QLabel size to the scaled size
         lb->setPixmap(pixmap);
         lb->show();
+        lb->move(this->width()/2-pixmap.width()*0.7,-pixmap.height()*1.5);
+        QPropertyAnimation * animation =new QPropertyAnimation(lb,"geometry");
+        animation->setDuration(1000);
+        animation->setStartValue(QRect(lb->x(),lb->y(),lb->width(),lb->height()));
+        animation->setEndValue(QRect(lb->x(),lb->y()+pixmap.height()*2,lb->width(),lb->height()));allow_start=false;
+        animation->setEasingCurve(QEasingCurve::OutBounce);
+        animation->start();
         time->stop();
         allow_start=false;
         restat();
     }
     if(m_bIsBlackTun==1)
-    m_bIsBlackTun=2;
+        m_bIsBlackTun=2;
     else if(m_bIsBlackTun==2)
-    m_bIsBlackTun=1;
+        m_bIsBlackTun=1;
 }
 
 bool MainWindow::yougiveup() {
@@ -241,7 +249,13 @@ bool MainWindow::yougiveup() {
     lb->setGeometry(20, 20, 400, 400); // set QLabel size to the scaled size
     lb->setPixmap(pixmap);
     lb->show();
-    allow_start=false;
+    lb->move(this->width()/2-pixmap.width()*0.7,-pixmap.height()*1.5);
+    QPropertyAnimation * animation =new QPropertyAnimation(lb,"geometry");
+    animation->setDuration(1000);
+    animation->setStartValue(QRect(lb->x(),lb->y(),lb->width(),lb->height()));
+    animation->setEndValue(QRect(lb->x(),lb->y()+pixmap.height()*2,lb->width(),lb->height()));allow_start=false;
+    animation->setEasingCurve(QEasingCurve::OutBounce);
+    animation->start();
     time->stop();
     restat();
     return true;
@@ -265,6 +279,13 @@ void MainWindow::on_time() {//倒计时
         lb->setGeometry(20, 20, 400, 400); // set QLabel size to the scaled size
         lb->setPixmap(pixmap);
         lb->show();
+        lb->move(this->width()/2-pixmap.width()*0.7,-pixmap.height()*1.5);
+        QPropertyAnimation * animation =new QPropertyAnimation(lb,"geometry");
+        animation->setDuration(1000);
+        animation->setStartValue(QRect(lb->x(),lb->y(),lb->width(),lb->height()));
+        animation->setEndValue(QRect(lb->x(),lb->y()+pixmap.height()*2,lb->width(),lb->height()));allow_start=false;
+        animation->setEasingCurve(QEasingCurve::OutBounce);
+        animation->start();
         allow_start=false;
         time->stop();
         restat();
