@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/mp3/zhongli">
+        <file>ZhongLi_mp3/01.mp3</file>
+        <file>ZhongLi_mp3/02.mp3</file>
+        <file>ZhongLi_mp3/03.mp3</file>
+        <file>ZhongLi_mp3/04.mp3</file>
+        <file>ZhongLi_mp3/05.mp3</file>
+        <file>ZhongLi_mp3/06.mp3</file>
+        <file>ZhongLi_mp3/07.mp3</file>
+    </qresource>
+</RCC>
