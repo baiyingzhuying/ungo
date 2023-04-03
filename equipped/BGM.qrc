@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/bgm">
+        <file>Genshin Impact Main Theme .wav</file>
+    </qresource>
+</RCC>
