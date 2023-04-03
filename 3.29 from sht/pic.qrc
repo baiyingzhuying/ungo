@@ -1,9 +1,0 @@
-<RCC>
-    <qresource prefix="/picture">
-        <file>background.jpg</file>
-        <file>help.png</file>
-        <file>login.png</file>
-        <file>ourteam.png</file>
-        <file>visitor.png</file>
-    </qresource>
-</RCC>

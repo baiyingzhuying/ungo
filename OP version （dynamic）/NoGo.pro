@@ -36,7 +36,6 @@ RESOURCES += \
     giveup.qrc \
     leishen.qrc \
     leishen2.qrc \
-    leishen_mp3.qrc \
     mikubcg.qrc \
     newback.qrc \
     pic.qrc \
@@ -47,8 +46,7 @@ RESOURCES += \
     start.qrc \
     time.qrc \
     wendi.qrc \
-    zhongli.qrc \
-    zhongli_mp3.qrc
+    zhongli.qrc
 
 DISTFILES += \
     image/help.png \
