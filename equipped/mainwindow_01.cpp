@@ -33,6 +33,7 @@ MainWindow_01::MainWindow_01(QWidget *parent) :
             ROW=13;
             COLLON=13;
         }
+
     });
 //    if(haveblack){
 //        ui->user_black->setText(Black_player);

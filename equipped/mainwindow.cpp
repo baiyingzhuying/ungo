@@ -46,6 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
     time->setInterval(100);//间隔为0.1s
     this->ui->restart->hide();//隐藏重开按钮
     this->ui->reproduce->hide();//隐藏重现按钮
+    this->ui->report->hide();
     connect(time,&QTimer::timeout,this,&MainWindow::on_time);//开始倒计时
     connect(this->ui->quitButton,&QPushButton::clicked,this,&MainWindow::yougiveup);//认输按钮
     connect(this->ui->startButton,&QPushButton::clicked,this,&MainWindow::start);//开始按钮
@@ -178,7 +179,7 @@ void MainWindow::check(int x,int y) {//不能下死手
     int dy[4]={0,0,1,-1};//四个方向
     visit[x][y]=true;
     for(int i=0;i<=3;i++) {
-        if(x+dx[i]>0&&x+dx[i]<=ROW+1&&y+dy[i]>0&&y+dy[i]<=COLLON+1){
+        if(x+dx[i]>0&&x+dx[i]<ROW+1&&y+dy[i]>0&&y+dy[i]<COLLON+1){
 
         if(m_items[x+dx[i]][y+dy[i]]==0) {
             zz= true;//周围有空
@@ -202,7 +203,7 @@ void MainWindow::check3(int x,int y) {
     int dy[4]={0,0,1,-1};//四个方向
     visit[x][y]=true;
     for(int i=0;i<=3;i++) {
-        if(x+dx[i]>0&&x+dx[i]<=ROW+1&&y+dy[i]>0&&y+dy[i]<=COLLON+1)
+        if(x+dx[i]>0&&x+dx[i]<ROW+1&&y+dy[i]>0&&y+dy[i]<COLLON+1)
         if(m_items[x+dx[i]][y+dy[i]]==0) {
             rr= true;//周围有空
             return;
@@ -217,6 +218,7 @@ void MainWindow::check3(int x,int y) {
             }
         }
     }//禁落点的判断
+
     return;
 }
 void MainWindow::check2(int x,int y) {//落子不吃子
@@ -225,7 +227,7 @@ void MainWindow::check2(int x,int y) {//落子不吃子
     int dy[4]={0,0,1,-1};//四个方向
     for(int i=0;i<=3;i++) {
         int x1=x+dx[i],y1=y+dy[i];
-        if(x+dx[i]>0&&x+dx[i]<=ROW+1&&y+dy[i]>0&&y+dy[i]<=COLLON+1){
+        if(x+dx[i]>0&&x+dx[i]<ROW+1&&y+dy[i]>0&&y+dy[i]<COLLON+1){
         if(m_items[x1][y1]!=m_items[x][y]&&m_items[x1][y1]!=0 ){
             rr=false;
             check3(x1,y1);
@@ -241,11 +243,11 @@ void MainWindow::check2(int x,int y) {//落子不吃子
         rr=true;
         return;
     }
-    if(jishu3==3&&((x==1&&y!=COLLON+1&&y!=1)||(y!=1&&y!=COLLON+1&&x==ROW+1)||(y==1&&x!=COLLON+1&&x!=1)||(x!=1&&x!=COLLON+1&&y==ROW+1))){
+    if(jishu3==3&&((x==1&&y!=COLLON&&y!=1)||(y!=1&&y!=COLLON&&x==ROW)||(y==1&&x!=COLLON&&x!=1)||(x!=1&&x!=COLLON&&y==ROW))){
         rr=true;
     return;
     }
-    if(jishu3==2&&(x==COLLON+1&&y==1)||(x==1&&y==1)||(x==1&&y==ROW+1)||(x==COLLON+1&&y==COLLON+1)){
+    if(jishu3==2&&(x==COLLON&&y==1)||(x==1&&y==1)||(x==1&&y==ROW)||(x==COLLON&&y==COLLON)){
         rr=true;
         return;
     }
@@ -300,6 +302,14 @@ void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了�
         this->ui->quitButton->hide();
         time->stop();
         allow_start=false;
+        if(m_items[x][y]==1){
+        this->ui->report->setPlainText("白方玩家胜利\n");
+        this->ui->report->setAlignment(Qt::AlignCenter);
+        }else {
+        this->ui->report->setPlainText("黑方玩家胜利\n");
+        this->ui->report->setAlignment(Qt::AlignCenter);
+        }
+        this->ui->report->show();
         restat();
     }
     if(m_bIsBlackTun==1)
@@ -326,6 +336,16 @@ bool MainWindow::yougiveup() {//认输
     animation->setEasingCurve(QEasingCurve::OutBounce);
     animation->start();
     time->stop();
+    if(m_items[lastMove.x()][lastMove.y()]==2||m_items[lastMove.x()][lastMove.y()]==0){
+    this->ui->report->setPlainText("黑方认输，白方玩家胜利\n");
+    this->ui->report->setAlignment(Qt::AlignCenter);
+    this->ui->report->show();
+    }
+    if(m_items[lastMove.x()][lastMove.y()]==1){
+    this->ui->report->setPlainText("白方认输，黑方玩家胜利\n");
+    this->ui->report->setAlignment(Qt::AlignCenter);
+    this->ui->report->show();
+    }
     this->ui->quitButton->hide();
     restat();
     return true;
@@ -358,6 +378,16 @@ void MainWindow::on_time() {//倒计时
         animation->start();
         allow_start=false;
         time->stop();
+        if(m_items[lastMove.x()][lastMove.y()]==2||m_items[lastMove.x()][lastMove.y()]==0){
+        this->ui->report->setPlainText("黑方超时，白方玩家胜利\n");
+        this->ui->report->setAlignment(Qt::AlignCenter);
+        this->ui->report->show();
+        }
+        if(m_items[lastMove.x()][lastMove.y()]==1){
+        this->ui->report->setPlainText("白方超时，黑方玩家胜利\n");
+        this->ui->report->setAlignment(Qt::AlignCenter);
+        this->ui->report->show();
+        }
         restat();
     }
     ui->lcdNumber->display(remaining_time);
@@ -375,8 +405,10 @@ bool MainWindow::restarted() {//重开
     remaining_time=30;
     ui->lcdNumber->display(remaining_time);
     lb->hide();
+    this->ui->quitButton->show();
     this->ui->reproduce->hide();
     this->ui->restart->hide();
+    this->ui->report->hide();
     m_bIsBlackTun=1;
     allow_start=true;
     you_lose=false;
@@ -416,6 +448,7 @@ bool MainWindow::save() {//存储程序
 bool MainWindow::read_in() {//复盘程序
     reproduced=true;
     this->lb->hide();
+    this->ui->report->hide();
     QFile file("items.txt");
     if (!file.exists()) {
         qDebug() << "File not found.";
@@ -425,7 +458,6 @@ bool MainWindow::read_in() {//复盘程序
         qDebug() << "Failed to open file";
         return false;
     }
-
     QTextStream in(&file);
     memset(m_items,0,sizeof(m_items));
     for (int i = 0; i <= ROW; ++i) {

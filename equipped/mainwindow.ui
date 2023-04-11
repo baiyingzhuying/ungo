@@ -251,6 +251,16 @@ image: url(:/new/prefix1/start.png);}</string>
      <string>存储</string>
     </property>
    </widget>
+   <widget class="QTextEdit" name="report">
+    <property name="geometry">
+     <rect>
+      <x>245</x>
+      <y>460</y>
+      <width>401</width>
+      <height>151</height>
+     </rect>
+    </property>
+   </widget>
    <zorder>label_5</zorder>
    <zorder>label_4</zorder>
    <zorder>label_3</zorder>
@@ -265,6 +275,7 @@ image: url(:/new/prefix1/start.png);}</string>
    <zorder>startButton</zorder>
    <zorder>reproduce</zorder>
    <zorder>savebutton</zorder>
+   <zorder>report</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -280,9 +291,9 @@ image: url(:/new/prefix1/start.png);}</string>
  </widget>
  <resources>
   <include location="time.qrc"/>
+  <include location="giveup.qrc"/>
   <include location="start.qrc"/>
   <include location="restart.qrc"/>
-  <include location="giveup.qrc"/>
   <include location="mikubcg.qrc"/>
  </resources>
  <connections/>

@@ -13,6 +13,8 @@
 #include<QImage>
 #include<QFile>
 #include<QDir>
+#include<QThread>
+#include<windows.h>
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
