@@ -1,12 +1,14 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include"mainwindow_01.h"
+#include"setting.h"
 #include<QPainter>
 #include<QMouseEvent>
 #include<QMessageBox>
 #include<QPoint>
 #include<QtCore/qmath.h>
 #include<QLabel>
+#include"ui_setting.h"
 #define LIMIT_WIDTH 700
 #define LIMIT_HEIGHT 700
 #include<qpainterpath.h>
@@ -53,6 +55,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->ui->restart,&QPushButton::clicked,this,&MainWindow::restarted);//重开
     connect(this->ui->savebutton,&QPushButton::clicked,this,&MainWindow::save);//保存
     connect(this->ui->reproduce,&QPushButton::clicked,this,&MainWindow::read_in);//读入
+    connect(this->ui->setbutton,&QPushButton::clicked,this,&MainWindow::setting_show);
+    connect(ww->ui->sure,&QPushButton::clicked,this,&MainWindow::time_set);
     QStatusBar *statusBar = new QStatusBar(this);
         setStatusBar(statusBar);
     QSoundEffect * BGM=new QSoundEffect;
@@ -350,16 +354,19 @@ bool MainWindow::yougiveup() {//认输
     restat();
     return true;
 }
-
 void MainWindow::on_time() {//倒计时
-    remaining_time=ui->lcdNumber->value();//将倒计时赋值给remaining_time
-
+    if(ww->ui->numedit->text().toInt()!=0){
+    remaining_time=ww->ui->numedit->text().toDouble();//将倒计时赋值给remaining_time
+    }
+    else {
+    remaining_time=30;
+    }
     if(pressed) {
-        remaining_time=30;
+        time_now=remaining_time;
         pressed=false;
     }
-    remaining_time-=0.1;//
-    if(remaining_time<0){
+    time_now-=0.1;//
+    if(time_now<0){
         out_of_timelimit=true;
         QImage pool;
         pool.load(":/new/prefix1/lost.jpg");
@@ -390,9 +397,16 @@ void MainWindow::on_time() {//倒计时
         }
         restat();
     }
-    ui->lcdNumber->display(remaining_time);
+    ui->lcdNumber->display(time_now);
 }
 bool MainWindow::start() {//开始
+    if(ww->ui->numedit->text().toInt()!=0){
+        remaining_time=ww->ui->numedit->text().toDouble();//将倒计时赋值给remaining_time
+    }
+    else {
+        remaining_time=30;
+    }
+    time_now=remaining_time;
     time->start();
     this->ui->startButton->hide();
     this->ui->reproduce->hide();
@@ -402,13 +416,19 @@ bool MainWindow::start() {//开始
 }
 bool MainWindow::restarted() {//重开
     memset(m_items,0,sizeof(m_items));
-    remaining_time=30;
-    ui->lcdNumber->display(remaining_time);
+    if(ww->ui->numedit->text().toInt()!=0){
+        remaining_time=ww->ui->numedit->text().toDouble();//将倒计时赋值给remaining_time
+    }
+    else {
+        remaining_time=30;
+    }
+    time_now=remaining_time;
+    ui->lcdNumber->display(time_now);
     lb->hide();
-    this->ui->quitButton->show();
     this->ui->reproduce->hide();
     this->ui->restart->hide();
     this->ui->report->hide();
+    this->ui->quitButton->show();
     m_bIsBlackTun=1;
     allow_start=true;
     you_lose=false;
@@ -448,7 +468,6 @@ bool MainWindow::save() {//存储程序
 bool MainWindow::read_in() {//复盘程序
     reproduced=true;
     this->lb->hide();
-    this->ui->report->hide();
     QFile file("items.txt");
     if (!file.exists()) {
         qDebug() << "File not found.";
@@ -458,6 +477,7 @@ bool MainWindow::read_in() {//复盘程序
         qDebug() << "Failed to open file";
         return false;
     }
+
     QTextStream in(&file);
     memset(m_items,0,sizeof(m_items));
     for (int i = 0; i <= ROW; ++i) {
@@ -476,7 +496,15 @@ bool MainWindow::read_in() {//复盘程序
 void vs_ai() {
 
 }
-
+bool MainWindow::setting_show() {
+    ww->show();
+    return true;
+}
+bool MainWindow::time_set() {
+    QString time_edit=ww->ui->numedit->text();
+    remaining_time=time_edit.toDouble();
+    return true;
+}
 void MainWindow::paintEvent(QPaintEvent*)
 {
     DrawCHessBroad();

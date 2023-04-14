@@ -261,6 +261,19 @@ image: url(:/new/prefix1/start.png);}</string>
      </rect>
     </property>
    </widget>
+   <widget class="QPushButton" name="setbutton">
+    <property name="geometry">
+     <rect>
+      <x>840</x>
+      <y>380</y>
+      <width>93</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>设置</string>
+    </property>
+   </widget>
    <zorder>label_5</zorder>
    <zorder>label_4</zorder>
    <zorder>label_3</zorder>
@@ -276,6 +289,7 @@ image: url(:/new/prefix1/start.png);}</string>
    <zorder>reproduce</zorder>
    <zorder>savebutton</zorder>
    <zorder>report</zorder>
+   <zorder>setbutton</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -291,9 +305,9 @@ image: url(:/new/prefix1/start.png);}</string>
  </widget>
  <resources>
   <include location="time.qrc"/>
-  <include location="giveup.qrc"/>
-  <include location="start.qrc"/>
   <include location="restart.qrc"/>
+  <include location="start.qrc"/>
+  <include location="giveup.qrc"/>
   <include location="mikubcg.qrc"/>
  </resources>
  <connections/>

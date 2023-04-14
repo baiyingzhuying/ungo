@@ -15,6 +15,7 @@
 #include<QDir>
 #include<QThread>
 #include<windows.h>
+#include"setting.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -24,6 +25,7 @@ extern int ROW;
 extern int COLLON;
 extern int WIDTH;
 extern int HEIGHT;
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -62,6 +64,7 @@ public:
     QTimer *time;
     bool pressed;//落子
     bool visit[1001][1001];
+    double time_now;
     double remaining_time;//剩余时间
     bool start();//开始
     void restat();//重开
@@ -81,7 +84,9 @@ public:
     int count_black,count_while;
     void vs_ai();
     bool IsVolume;
-
+    bool setting_show();
+    bool time_set();
+    setting *ww=new setting;
 public slots:
     void on_time();
 private:

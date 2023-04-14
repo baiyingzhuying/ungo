@@ -18,7 +18,6 @@ MainWindow_01::MainWindow_01(QWidget *parent) :
         YongHu * user=new YongHu;
 //        this->close();
         user->show();
-
     });
     connect(ui->Broad,QOverload<int>::of(&QComboBox::activated),[=](int index){
         if(index==0){
