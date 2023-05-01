@@ -76,9 +76,6 @@ void MainWindow::DrawCHessBroad()//画个棋盘
 
 
     QPainter painter(this);
-    for(int i=1;i<jishu;i++) {
-        m_steps[items[i].p_x][items[i].p_y]=items[i].steps;
-    }
     QPen pen(Qt::black, 4); // 定义黑色画笔
     QBrush brush(QColor(173, 216, 230)); // 定义浅黄色画刷
     painter.setPen(pen);
@@ -114,9 +111,9 @@ void MainWindow::DrawItems() //画个棋子
     QPainter painter(this);
     QImage pic;
 
-    for(int i=0; i<19; i++)
+    for(int i=0; i<=ROW; i++)
     {
-        for(int j=0; j<19; j++)
+        for(int j=0; j<=COLLON; j++)
         {
             if(m_items[i][j] == 1){
                 painter.setPen(Qt::NoPen);
@@ -270,9 +267,8 @@ void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了�
     }
     //循环所有棋子判断落子出是否存在棋子
     if(m_items[pt.x()][pt.y()]!=0) return;
-    items[jishu]=node{m_bIsBlackTun,pt.x(),pt.y(),jishu};
+    items[jishu++]=node{m_bIsBlackTun,pt.x(),pt.y(),jishu};
     lastMove=QPoint(pt.x(),pt.y());
-    jishu++;
     Item item(pt,m_bIsBlackTun);
     int x=item.m_pt.x();
     int y=item.m_pt.y();
@@ -285,6 +281,29 @@ void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了�
     memset(visit,0,sizeof(visit));
     check2(x,y);
     if(zz==false||rr==false) {
+        if(times_for_place[x][y]!=2) {
+        times_for_place[x][y]++;
+        QTextEdit *textEdit=new QTextEdit(this);
+        QPoint position(chess_x,chess_y);
+        textEdit->move(position);
+        QSize size(300,200);
+        textEdit->resize(size);
+        textEdit->setPlainText("亲，这里不能落子哦");
+        textEdit->show();
+        QTimer *timer = new QTimer(this);
+        // 设置定时器超时时间为2秒
+        timer->setInterval(3000);
+        // 连接定时器的超时信号到槽函数
+        connect(timer, &QTimer::timeout, this, [=]() {
+            // 在定时器超时后执行的程序
+            textEdit->hide();
+            m_items[x][y]=0;
+            jishu--;
+        });
+        // 启动定时器
+        timer->start();
+        return;
+        }
         you_lose=true;
         QImage pool;
         pool.load(":/new/prefix1/lost.jpg");
@@ -306,15 +325,21 @@ void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了�
         this->ui->quitButton->hide();
         time->stop();
         allow_start=false;
-        if(m_items[x][y]==1){
-        this->ui->report->setPlainText("白方玩家胜利\n");
+        if(m_items[x][y]==1&&times_for_place[x][y]==2){
+        QString report_message="黑方落子违规，白方玩家胜利\n 总步数：%1\n游戏总时长: %2\n黑方总思考时长: %3\n白方总思考时长: %4";
+        QString report_mes=report_message.arg(jishu-1).arg(time_total_black+time_total_white).arg(time_total_black).arg(time_total_white);
+        this->ui->report->setPlainText(report_mes);
         this->ui->report->setAlignment(Qt::AlignCenter);
-        }else {
-        this->ui->report->setPlainText("黑方玩家胜利\n");
-        this->ui->report->setAlignment(Qt::AlignCenter);
-        }
         this->ui->report->show();
         restat();
+        }else if(m_items[x][y]==2&&times_for_place[x][y]==2){
+        QString report_message="白方落子违规，黑方玩家胜利\n 总步数：%1\n游戏总时长: %2\n黑方总思考时长: %3\n白方总思考时长: %4";
+        QString report_mes=report_message.arg(jishu-1).arg(time_total_black+time_total_white).arg(time_total_black).arg(time_total_white);
+        this->ui->report->setPlainText(report_mes);
+        this->ui->report->setAlignment(Qt::AlignCenter);
+        this->ui->report->show();
+        restat();
+        }
     }
     if(m_bIsBlackTun==1)
     m_bIsBlackTun=2;
@@ -341,15 +366,20 @@ bool MainWindow::yougiveup() {//认输
     animation->start();
     time->stop();
     if(m_items[lastMove.x()][lastMove.y()]==2||m_items[lastMove.x()][lastMove.y()]==0){
-    this->ui->report->setPlainText("黑方认输，白方玩家胜利\n");
+    QString report_message="黑方认输，白方玩家胜利\n 总步数：%1\n游戏总时长: %2\n黑方总思考时长: %3\n白方总思考时长: %4";
+    QString report_mes=report_message.arg(jishu).arg(time_total_black+time_total_white).arg(time_total_black).arg(time_total_white);
+    this->ui->report->setPlainText(report_mes);
     this->ui->report->setAlignment(Qt::AlignCenter);
     this->ui->report->show();
     }
     if(m_items[lastMove.x()][lastMove.y()]==1){
-    this->ui->report->setPlainText("白方认输，黑方玩家胜利\n");
+    QString report_message="黑方认输，白方玩家胜利\n 总步数：%1\n游戏总时长: %2\n黑方总思考时长: %3\n白方总思考时长: %4";
+    QString report_mes=report_message.arg(jishu).arg(time_total_black+time_total_white).arg(time_total_black).arg(time_total_white);
+    this->ui->report->setPlainText(report_mes);
     this->ui->report->setAlignment(Qt::AlignCenter);
     this->ui->report->show();
     }
+    this->ui->setbutton->show();
     this->ui->quitButton->hide();
     restat();
     return true;
@@ -366,6 +396,11 @@ void MainWindow::on_time() {//倒计时
         pressed=false;
     }
     time_now-=0.1;//
+    if(m_bIsBlackTun==1) {
+        time_total_black+=0.1;
+    }else {
+        time_total_white+=0.1;
+    }
     if(time_now<0){
         out_of_timelimit=true;
         QImage pool;
@@ -386,12 +421,16 @@ void MainWindow::on_time() {//倒计时
         allow_start=false;
         time->stop();
         if(m_items[lastMove.x()][lastMove.y()]==2||m_items[lastMove.x()][lastMove.y()]==0){
-        this->ui->report->setPlainText("黑方超时，白方玩家胜利\n");
+        QString report_message="黑方超时，白方玩家胜利\n 总步数：%1\n游戏总时长: %2\n黑方总思考时长: %3\n白方总思考时长: %4";
+        QString report_mes=report_message.arg(jishu).arg(time_total_black+time_total_white).arg(time_total_black).arg(time_total_white);
+        this->ui->report->setPlainText(report_mes);
         this->ui->report->setAlignment(Qt::AlignCenter);
         this->ui->report->show();
         }
         if(m_items[lastMove.x()][lastMove.y()]==1){
-        this->ui->report->setPlainText("白方超时，黑方玩家胜利\n");
+        QString report_message="白方超时，黑方玩家胜利\n 总步数：%1\n游戏总时长: %2\n黑方总思考时长: %3\n白方总思考时长: %4";
+        QString report_mes=report_message.arg(jishu).arg(time_total_black+time_total_white).arg(time_total_black).arg(time_total_white);
+        this->ui->report->setPlainText(report_mes);
         this->ui->report->setAlignment(Qt::AlignCenter);
         this->ui->report->show();
         }
@@ -406,6 +445,7 @@ bool MainWindow::start() {//开始
     else {
         remaining_time=30;
     }
+    this->ui->setbutton->hide();
     time_now=remaining_time;
     time->start();
     this->ui->startButton->hide();
@@ -435,29 +475,32 @@ bool MainWindow::restarted() {//重开
     you_giveup=false;
     out_of_timelimit=false;
     time->start();
+    this->ui->setbutton->hide();
+    this->ui->report->hide();
     jishu=1;
     reproduced=false;//不是重现的
     return true;
 }
-void MainWindow::restat() {
+void MainWindow::restat() {//重开的模块化
     this->ui->restart->show();
     this->ui->reproduce->show();
+    this->ui->setbutton->show();
 }
 
 
 bool MainWindow::save() {//存储程序
-    QFile file("items.txt");
+    QFile file("item.txt");
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         qDebug() << "Failed to open file";
         return false;
     }
 
     QTextStream out(&file);
-    for (int i = 0; i <= ROW; ++i) {
-        for (int j = 0; j <= COLLON; ++j) {
-        out << m_items[i][j] << " ";
-        }
-        out << "\n";
+    for(int i=1;i<jishu;i++) {
+        out<<items[i].p_x<<char(items[i].p_y+'A'-1)<<" ";
+    }
+    if(you_giveup) {
+        out<<"G";
     }
     file.close();
     QString currentPath = QDir::currentPath();
@@ -468,7 +511,8 @@ bool MainWindow::save() {//存储程序
 bool MainWindow::read_in() {//复盘程序
     reproduced=true;
     this->lb->hide();
-    QFile file("items.txt");
+    this->ui->report->hide();
+    QFile file("item.txt");
     if (!file.exists()) {
         qDebug() << "File not found.";
         return false;
@@ -480,27 +524,40 @@ bool MainWindow::read_in() {//复盘程序
 
     QTextStream in(&file);
     memset(m_items,0,sizeof(m_items));
-    for (int i = 0; i <= ROW; ++i) {
-        for (int j = 0; j <= COLLON; ++j) {
-        if (in.status() != QTextStream::Ok) {
-            qDebug() << "Failed to read value at row " << i << " column " << j;
-            file.close();
-            return false;
+    memset(m_steps,0,sizeof(m_steps));
+    QString str;
+    int num=1;
+    while(!in.atEnd()) {
+        in>>str;
+        bool ok;
+        qDebug()<<str.right(1);
+        int x,y;
+        x=str.mid(0,str.length()-1).toInt(&ok);//横轴
+        if(!ok) {
+        qDebug()<<"Invalid number: "<<str;
+        break;
+        }else {
+        y=str.right(1).at(0).unicode()-'A'+1;//纵轴
+         qDebug()<<x<<y;
         }
-        in >> m_items[i][j];
+        if(num%2==1)
+        m_items[x][y]=1;
+        else {
+        m_items[x][y]=2;
         }
+        m_steps[x][y]=num;
+        qDebug()<<x<<y<<m_steps[x][y];
+        num++;
     }
     file.close();
     return true;
 }
-void vs_ai() {
 
-}
-bool MainWindow::setting_show() {
+bool MainWindow::setting_show() {//显示设置界面
     ww->show();
     return true;
 }
-bool MainWindow::time_set() {
+bool MainWindow::time_set() {//设置倒计时
     QString time_edit=ww->ui->numedit->text();
     remaining_time=time_edit.toDouble();
     return true;

@@ -66,23 +66,25 @@ public:
     bool visit[1001][1001];
     double time_now;
     double remaining_time;//剩余时间
+    double time_total_white;
+    double time_total_black;
     bool start();//开始
     void restat();//重开
     bool restarted();//重开
-    QPoint lastMove;
-    int jishu=0;
+    QPoint lastMove;//上一步
+    int jishu=0;//总步数
     struct node {
         int colors;
         int p_x;
         int p_y;
         int steps;
-    }items[20*20];
+    }items[20*20];//位置，步数，颜色
+    int times_for_place[20][20];
     bool save();//存储
     bool read_in();//读入
     int m_steps[20][20];//记录步数
-    bool reproduced;
+    bool reproduced;//重现
     int count_black,count_while;
-    void vs_ai();
     bool IsVolume;
     bool setting_show();
     bool time_set();
