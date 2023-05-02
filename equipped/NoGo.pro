@@ -15,19 +15,28 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     mainwindow_01.cpp \
+    netting.cpp \
+    networkcpp/networkdata.cpp \
+    networkcpp/networkserver.cpp \
+    networkcpp/networksocket.cpp \
     setting.cpp \
     yonghu.cpp
+
 
 HEADERS += \
     item.h \
     mainwindow.h \
     mainwindow_01.h \
+    netting.h \
+    network/networkdata.h \
+    network/networkserver.h \
+    network/networksocket.h \
     setting.h \
     yonghu.h
-
 FORMS += \
     mainwindow.ui \
     mainwindow_01.ui \
+    netting.ui \
     setting.ui \
     yonghu.ui
 

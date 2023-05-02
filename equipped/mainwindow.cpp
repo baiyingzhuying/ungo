@@ -57,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->ui->reproduce,&QPushButton::clicked,this,&MainWindow::read_in);//读入
     connect(this->ui->setbutton,&QPushButton::clicked,this,&MainWindow::setting_show);
     connect(ww->ui->sure,&QPushButton::clicked,this,&MainWindow::time_set);
+    connect(this->ui->net_setting,&QPushButton::clicked,this,&MainWindow::net_setting_show);
     QStatusBar *statusBar = new QStatusBar(this);
         setStatusBar(statusBar);
     QSoundEffect * BGM=new QSoundEffect;
@@ -555,6 +556,10 @@ bool MainWindow::read_in() {//复盘程序
 
 bool MainWindow::setting_show() {//显示设置界面
     ww->show();
+    return true;
+}
+bool MainWindow::net_setting_show() {
+    nw->show();
     return true;
 }
 bool MainWindow::time_set() {//设置倒计时

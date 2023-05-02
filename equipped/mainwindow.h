@@ -16,6 +16,7 @@
 #include<QThread>
 #include<windows.h>
 #include"setting.h"
+#include"netting.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -87,8 +88,10 @@ public:
     int count_black,count_while;
     bool IsVolume;
     bool setting_show();
+    bool net_setting_show();
     bool time_set();
     setting *ww=new setting;
+    netting *nw=new netting;
 public slots:
     void on_time();
 private:
