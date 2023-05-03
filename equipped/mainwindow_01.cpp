@@ -32,8 +32,8 @@ MainWindow_01::MainWindow_01(QWidget *parent) :
             ROW=13;
             COLLON=13;
         }
-
     });
+    connect(this->ui->net_setting,&QPushButton::clicked,this,&MainWindow_01::net_setting_show);
 //    if(haveblack){
 //        ui->user_black->setText(Black_player);
 //        qApp->processEvents();
@@ -62,6 +62,7 @@ void MainWindow_01::setBlackUser(QString &text){
     Cover->show();
     qApp->processEvents();
 }
-
-
+bool MainWindow_01::net_setting_show() {
+    nw->show();
+}
 

@@ -274,19 +274,6 @@ image: url(:/new/prefix1/start.png);}</string>
      <string>设置</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="net_setting">
-    <property name="geometry">
-     <rect>
-      <x>840</x>
-      <y>420</y>
-      <width>101</width>
-      <height>29</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>网络联机设置</string>
-    </property>
-   </widget>
    <zorder>label_5</zorder>
    <zorder>label_4</zorder>
    <zorder>label_3</zorder>
@@ -303,7 +290,6 @@ image: url(:/new/prefix1/start.png);}</string>
    <zorder>savebutton</zorder>
    <zorder>report</zorder>
    <zorder>setbutton</zorder>
-   <zorder>net_setting</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -319,10 +305,10 @@ image: url(:/new/prefix1/start.png);}</string>
  </widget>
  <resources>
   <include location="mikubcg.qrc"/>
-  <include location="time.qrc"/>
-  <include location="giveup.qrc"/>
   <include location="restart.qrc"/>
   <include location="start.qrc"/>
+  <include location="giveup.qrc"/>
+  <include location="time.qrc"/>
  </resources>
  <connections/>
 </ui>

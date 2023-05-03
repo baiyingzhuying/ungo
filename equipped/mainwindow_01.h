@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_01_H
 #define MAINWINDOW_01_H
 #include <QMainWindow>
-
+#include"netting.h"
 namespace Ui {
 class MainWindow_01;
 }
@@ -13,7 +13,8 @@ class MainWindow_01 : public QMainWindow
 public:
     explicit MainWindow_01(QWidget *parent = nullptr);
     ~MainWindow_01();
-
+    bool net_setting_show();
+    netting *nw=new netting;
     friend class YongHu;
 private slots:
     void setWhiteUser(QString &text);
