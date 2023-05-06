@@ -25,6 +25,7 @@
 #include"network/networkdata.h"
 #include"network/networkserver.h"
 #include"network/networksocket.h"
+#include"ui_netting.h"
 //#define ROW 13
 //#define COLLON 13
 //#define WIDTH 50
@@ -60,6 +61,18 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->ui->reproduce,&QPushButton::clicked,this,&MainWindow::read_in);//读入
     connect(this->ui->setbutton,&QPushButton::clicked,this,&MainWindow::setting_show);
     connect(ww->ui->sure,&QPushButton::clicked,this,&MainWindow::time_set);
+    connect(this->ui->net_setting,&QPushButton::clicked,this,&MainWindow::net_set);
+    connect(this->ui->quitButton,&QPushButton::clicked,this,[=](){
+        if(net->id==1) {
+            this->ui->report->setText("你选择认输");
+            net->socket->send(NetworkData(OPCODE::GIVEUP_OP,net->nameE,"GLHF"));
+        }else{
+            this->ui->report->setText("你选择认输");
+            net->server->send(net->lastOne,NetworkData(OPCODE::GIVEUP_OP,net->nameE,"GLHF"));
+        }
+        net->you_give_up=true;
+        //qDebug()<<net->you_give_up;
+    });
     QStatusBar *statusBar = new QStatusBar(this);
     setStatusBar(statusBar);
     QSoundEffect * BGM=new QSoundEffect;
@@ -111,70 +124,99 @@ void MainWindow::DrawCHessBroad()//画个棋盘
 //画棋子
 void MainWindow::DrawItems() //画个棋子
 {
-    QPainter painter(this);
-    QImage pic;
+    if(!net->already_connected){
+        QPainter painter(this);
+        QImage pic;
 
-    for(int i=0; i<=ROW; i++)
-    {
-        for(int j=0; j<=COLLON; j++)
+        for(int i=0; i<=ROW; i++)
         {
-            if(m_items[i][j] == 1){
-                painter.setPen(Qt::NoPen);
-                painter.setBrush(QBrush(QColor(255, 192, 203)));
-            }
-            else if(m_items[i][j] == 2){
-                painter.setPen(Qt::NoPen);
-                painter.setBrush(QBrush(QColor(220, 208, 255)));
-            }
-            else{
-                continue;
-            }
-            //获取棋子位置
-            painter.setRenderHint(QPainter::Antialiasing);
-            QPoint ptCenter(i*WIDTH, j*HEIGHT);
-            //绘制棋子，棋子的半径为宽高的一半
-            painter.drawEllipse(ptCenter, WIDTH * 45/100, HEIGHT * 45/100);
-            painter.setBrush(QBrush(QColor(255, 255, 255)));
-            painter.drawEllipse(ptCenter, WIDTH*25/100, HEIGHT*25/100);
-            //MainWindow::play_wav(1);
-            //QPixmap leishen =QPixmap::fromImage(pic);//图片
-            //qreal radius=WIDTH*45/100;//是极半径
-            //QPainterPath path;
-            //path.addEllipse(ptCenter,radius,radius);
-            //painter.setClipPath(path);
-            //leishen=leishen.scaled(radius*2.65,radius*2.65,Qt::KeepAspectRatio,Qt::SmoothTransformation);
-            //painter.setClipPath(path);
-            //painter.drawPixmap(i*WIDTH-radius,j*HEIGHT-radius,leishen);
-            QPoint pt(i,j);
-            if(!reproduced&&pt==lastMove) {
-                painter.setBrush(Qt::red);
-                painter.drawEllipse(ptCenter,WIDTH*25/100,HEIGHT*25/100);//标记上一个落子
-            }
-            if(reproduced){//重现的代码
-                if(m_steps[i][j]>0) {
-                    painter.setPen(Qt::red);
-                    QFont font=painter.font();
-                    font.setPointSize(14);
-                    painter.setFont(font);
-                    QString stepStr=QString::number(m_steps[i][j]);
-                    //显示第几步
-                    if(m_steps[i][j]<10){
-                        QPoint ptText = ptCenter - QPoint(WIDTH * 10/100, -HEIGHT * 10/100);
-                        painter.drawText(ptText, stepStr);
-                    }else {
-                        QPoint ptText = ptCenter - QPoint(WIDTH * 15/100, -HEIGHT * 10/100);
-                        painter.drawText(ptText, stepStr);
+            for(int j=0; j<=COLLON; j++)
+            {
+                if(m_items[i][j] == 1){
+                    painter.setPen(Qt::NoPen);
+                    painter.setBrush(QBrush(QColor(255, 192, 203)));
+                }
+                else if(m_items[i][j] == 2){
+                    painter.setPen(Qt::NoPen);
+                    painter.setBrush(QBrush(QColor(220, 208, 255)));
+                }
+                else{
+                    continue;
+                }
+                //获取棋子位置
+                painter.setRenderHint(QPainter::Antialiasing);
+                QPoint ptCenter(i*WIDTH, j*HEIGHT);
+                //绘制棋子，棋子的半径为宽高的一半
+                painter.drawEllipse(ptCenter, WIDTH * 45/100, HEIGHT * 45/100);
+                painter.setBrush(QBrush(QColor(255, 255, 255)));
+                painter.drawEllipse(ptCenter, WIDTH*25/100, HEIGHT*25/100);
+                //MainWindow::play_wav(1);
+                //QPixmap leishen =QPixmap::fromImage(pic);//图片
+                //qreal radius=WIDTH*45/100;//是极半径
+                //QPainterPath path;
+                //path.addEllipse(ptCenter,radius,radius);
+                //painter.setClipPath(path);
+                //leishen=leishen.scaled(radius*2.65,radius*2.65,Qt::KeepAspectRatio,Qt::SmoothTransformation);
+                //painter.setClipPath(path);
+                //painter.drawPixmap(i*WIDTH-radius,j*HEIGHT-radius,leishen);
+                QPoint pt(i,j);
+                if(!reproduced&&pt==lastMove) {
+                    painter.setBrush(Qt::red);
+                    painter.drawEllipse(ptCenter,WIDTH*25/100,HEIGHT*25/100);//标记上一个落子
+                }
+                if(reproduced){//重现的代码
+                    if(m_steps[i][j]>0) {
+                        painter.setPen(Qt::red);
+                        QFont font=painter.font();
+                        font.setPointSize(14);
+                        painter.setFont(font);
+                        QString stepStr=QString::number(m_steps[i][j]);
+                        //显示第几步
+                        if(m_steps[i][j]<10){
+                            QPoint ptText = ptCenter - QPoint(WIDTH * 10/100, -HEIGHT * 10/100);
+                            painter.drawText(ptText, stepStr);
+                        }else {
+                            QPoint ptText = ptCenter - QPoint(WIDTH * 15/100, -HEIGHT * 10/100);
+                            painter.drawText(ptText, stepStr);
+                        }
                     }
                 }
+                //            painter.setBrush(Qt::NoBrush);
+                //            painter.setPen(Qt::NoPen);
+                //            painter.drawEllipse(innerRect);
+
+
             }
-            //            painter.setBrush(Qt::NoBrush);
-            //            painter.setPen(Qt::NoPen);
-            //            painter.drawEllipse(innerRect);
+        }
+    }else {//联网部分逻辑
+        QPainter painter(this);
+        QImage pic;
 
-
+        for(int i=0; i<=ROW; i++)
+        {
+            for(int j=0; j<=COLLON; j++)
+            {
+                if(net->items[i][j] == 1){
+                    painter.setPen(Qt::NoPen);
+                    painter.setBrush(QBrush(QColor(255, 192, 203)));
+                }
+                else if(net->items[i][j] == 2){
+                    painter.setPen(Qt::NoPen);
+                    painter.setBrush(QBrush(QColor(220, 208, 255)));
+                }
+                else{
+                    continue;
+                }
+                //获取棋子位置
+                painter.setRenderHint(QPainter::Antialiasing);
+                QPoint ptCenter(i*WIDTH, j*HEIGHT);
+                //绘制棋子，棋子的半径为宽高的一半
+                painter.drawEllipse(ptCenter, WIDTH * 45/100, HEIGHT * 45/100);
+                painter.setBrush(QBrush(QColor(255, 255, 255)));
+                painter.drawEllipse(ptCenter, WIDTH*25/100, HEIGHT*25/100);
+            }
         }
     }
-
 }
 //判断函数（finished)
 void MainWindow::check(int x,int y) {//不能下死手
@@ -258,96 +300,134 @@ void MainWindow::check2(int x,int y) {//落子不吃子
 }
 //落子程序
 void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了，别动
-    if(!allow_start||you_lose||you_giveup||out_of_timelimit) return;
-    pressed=true;
-    QPoint pt;
-    int chess_x=event->pos().x()+WIDTH/2;//获取鼠标点击的x坐标
-    int chess_y=event->pos().y()+HEIGHT/2;//y坐标
-    pt.setX(chess_x/WIDTH);//设置x坐标
-    pt.setY(chess_y/HEIGHT);//y坐标
-    if(pt.x()>=ROW+1||pt.y()>=COLLON+1||pt.x()<1||pt.y()<1) {
-        return;
-    }
-    //循环所有棋子判断落子出是否存在棋子
-    if(m_items[pt.x()][pt.y()]!=0) return;
-    items[jishu++]=node{m_bIsBlackTun,pt.x(),pt.y(),jishu};
-    lastMove=QPoint(pt.x(),pt.y());
-    Item item(pt,m_bIsBlackTun);
-    int x=item.m_pt.x();
-    int y=item.m_pt.y();
-    m_items[x][y]=m_bIsBlackTun;
-    //判断是否赢。。。。。
-    //判定四种情况。。。。。
-    rr=false;zz=false;
-    memset(visit,0,sizeof(visit));
-    check(x,y);
-    memset(visit,0,sizeof(visit));
-    check2(x,y);
-    if(zz==false||rr==false) {
-        if(times_for_place[x][y]!=2) {
-            times_for_place[x][y]++;
-            QTextEdit *textEdit=new QTextEdit(this);
-            QPoint position(chess_x,chess_y);
-            textEdit->move(position);
-            QSize size(300,200);
-            textEdit->resize(size);
-            textEdit->setPlainText("亲，这里不能落子哦");
-            textEdit->show();
-            QTimer *timer = new QTimer(this);
-            // 设置定时器超时时间为2秒
-            timer->setInterval(3000);
-            // 连接定时器的超时信号到槽函数
-            connect(timer, &QTimer::timeout, this, [=]() {
-                // 在定时器超时后执行的程序
-                textEdit->hide();
-                m_items[x][y]=0;
-                jishu--;
-            });
-            // 启动定时器
-            timer->start();
+    if(!net->already_connected){
+        if(!allow_start||you_lose||you_giveup||out_of_timelimit) return;
+        pressed=true;
+        QPoint pt;
+        int chess_x=event->pos().x()+WIDTH/2;//获取鼠标点击的x坐标
+        int chess_y=event->pos().y()+HEIGHT/2;//y坐标
+        pt.setX(chess_x/WIDTH);//设置x坐标
+        pt.setY(chess_y/HEIGHT);//y坐标
+        if(pt.x()>=ROW+1||pt.y()>=COLLON+1||pt.x()<1||pt.y()<1) {
             return;
         }
-        you_lose=true;
-        QImage pool;
-        pool.load(":/new/prefix1/lost.jpg");
-        QPixmap pixmap = QPixmap::fromImage(pool);
-        pixmap = pixmap.scaled(400, 400, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        this->lb = new QLabel(this);
-        lb->setGeometry(20, 20, 400, 400); // 设置大小
-        lb->setPixmap(pixmap);
-        lb->show();
-        //动画
-        lb->move(this->width()/2-pixmap.width()*0.7,-pixmap.height()*1.5);
-        QPropertyAnimation * animation =new QPropertyAnimation(lb,"geometry");
-        animation->setDuration(1000);
-        animation->setStartValue(QRect(lb->x(),lb->y(),lb->width(),lb->height()));
-        animation->setEndValue(QRect(lb->x(),lb->y()+pixmap.height()*2,lb->width(),lb->height()));allow_start=false;
-        animation->setEasingCurve(QEasingCurve::OutBounce);
-        animation->start();
-        //隐藏认输按钮(从而避免一些莫名其妙的bug）
-        this->ui->quitButton->hide();
-        time->stop();
-        allow_start=false;
-        if(m_items[x][y]==1&&times_for_place[x][y]==2){
-            QString report_message="黑方落子违规，白方玩家胜利\n 总步数：%1\n游戏总时长: %2\n黑方总思考时长: %3\n白方总思考时长: %4";
-            QString report_mes=report_message.arg(jishu-1).arg(time_total_black+time_total_white).arg(time_total_black).arg(time_total_white);
-            this->ui->report->setPlainText(report_mes);
-            this->ui->report->setAlignment(Qt::AlignCenter);
-            this->ui->report->show();
-            restat();
-        }else if(m_items[x][y]==2&&times_for_place[x][y]==2){
-            QString report_message="白方落子违规，黑方玩家胜利\n 总步数：%1\n游戏总时长: %2\n黑方总思考时长: %3\n白方总思考时长: %4";
-            QString report_mes=report_message.arg(jishu-1).arg(time_total_black+time_total_white).arg(time_total_black).arg(time_total_white);
-            this->ui->report->setPlainText(report_mes);
-            this->ui->report->setAlignment(Qt::AlignCenter);
-            this->ui->report->show();
-            restat();
+        //循环所有棋子判断落子出是否存在棋子
+        if(m_items[pt.x()][pt.y()]!=0) return;
+        items[jishu++]=node{m_bIsBlackTun,pt.x(),pt.y(),jishu};
+        lastMove=QPoint(pt.x(),pt.y());
+        Item item(pt,m_bIsBlackTun);
+        int x=item.m_pt.x();
+        int y=item.m_pt.y();
+        m_items[x][y]=m_bIsBlackTun;
+        //判断是否赢。。。。。
+        //判定四种情况。。。。。
+        rr=false;zz=false;
+        memset(visit,0,sizeof(visit));
+        check(x,y);
+        memset(visit,0,sizeof(visit));
+        check2(x,y);
+        if(zz==false||rr==false) {
+            if(times_for_place[x][y]!=2) {
+                times_for_place[x][y]++;
+                QTextEdit *textEdit=new QTextEdit(this);
+                QPoint position(chess_x,chess_y);
+                textEdit->move(position);
+                QSize size(300,200);
+                textEdit->resize(size);
+                textEdit->setPlainText("亲，这里不能落子哦");
+                textEdit->show();
+                QTimer *timer = new QTimer(this);
+                // 设置定时器超时时间为2秒
+                timer->setInterval(3000);
+                // 连接定时器的超时信号到槽函数
+                connect(timer, &QTimer::timeout, this, [=]() {
+                    // 在定时器超时后执行的程序
+                    textEdit->hide();
+                    m_items[x][y]=0;
+                    jishu--;
+                });
+                // 启动定时器
+                timer->start();
+                return;
+            }
+            you_lose=true;
+            QImage pool;
+            pool.load(":/new/prefix1/lost.jpg");
+            QPixmap pixmap = QPixmap::fromImage(pool);
+            pixmap = pixmap.scaled(400, 400, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            this->lb = new QLabel(this);
+            lb->setGeometry(20, 20, 400, 400); // 设置大小
+            lb->setPixmap(pixmap);
+            lb->show();
+            //动画
+            lb->move(this->width()/2-pixmap.width()*0.7,-pixmap.height()*1.5);
+            QPropertyAnimation * animation =new QPropertyAnimation(lb,"geometry");
+            animation->setDuration(1000);
+            animation->setStartValue(QRect(lb->x(),lb->y(),lb->width(),lb->height()));
+            animation->setEndValue(QRect(lb->x(),lb->y()+pixmap.height()*2,lb->width(),lb->height()));allow_start=false;
+            animation->setEasingCurve(QEasingCurve::OutBounce);
+            animation->start();
+            //隐藏认输按钮(从而避免一些莫名其妙的bug）
+            this->ui->quitButton->hide();
+            time->stop();
+            allow_start=false;
+            if(m_items[x][y]==1&&times_for_place[x][y]==2){
+                QString report_message="黑方落子违规，白方玩家胜利\n 总步数：%1\n游戏总时长: %2\n黑方总思考时长: %3\n白方总思考时长: %4";
+                QString report_mes=report_message.arg(jishu-1).arg(time_total_black+time_total_white).arg(time_total_black).arg(time_total_white);
+                this->ui->report->setPlainText(report_mes);
+                this->ui->report->setAlignment(Qt::AlignCenter);
+                this->ui->report->show();
+                restat();
+            }else if(m_items[x][y]==2&&times_for_place[x][y]==2){
+                QString report_message="白方落子违规，黑方玩家胜利\n 总步数：%1\n游戏总时长: %2\n黑方总思考时长: %3\n白方总思考时长: %4";
+                QString report_mes=report_message.arg(jishu-1).arg(time_total_black+time_total_white).arg(time_total_black).arg(time_total_white);
+                this->ui->report->setPlainText(report_mes);
+                this->ui->report->setAlignment(Qt::AlignCenter);
+                this->ui->report->show();
+                restat();
+            }
+        }
+        if(m_bIsBlackTun==1)
+            m_bIsBlackTun=2;
+        else if(m_bIsBlackTun==2)
+            m_bIsBlackTun=1;
+    }else {//用来写网络链接后
+        //qDebug()<<net->already_connected;
+        qDebug()<<net->your_turn;
+        if(net->your_turn==true){
+        m_bIsBlackTun=net->color;
+        QPoint pt;
+        int chess_x=event->pos().x()+WIDTH/2;//获取鼠标点击的x坐标
+        int chess_y=event->pos().y()+HEIGHT/2;//y坐标
+        pt.setX(chess_x/WIDTH);//设置x坐标
+        pt.setY(chess_y/HEIGHT);//y坐标
+        if(pt.x()>=ROW+1||pt.y()>=COLLON+1||pt.x()<1||pt.y()<1) {
+            return;
+        }
+        //循环所有棋子判断落子出是否存在棋子
+        QString move_x=QString::number(pt.x());
+        QString move_y=QChar(pt.y()+'A'-1);
+        QString move_op=move_y+move_x;
+        qint64 timestamp=QDateTime::currentMSecsSinceEpoch();
+        QString times_op=QString::number(timestamp);
+        qDebug()<<move_op;
+        if(net->id==1) {
+            net->socket->send(NetworkData(OPCODE::MOVE_OP,move_op,times_op));
+        }else {
+            net->server->send(net->lastOne,NetworkData(OPCODE::MOVE_OP,move_op,times_op));
+        }
+        items[jishu++]=node{m_bIsBlackTun,pt.x(),pt.y(),jishu};
+        lastMove=QPoint(pt.x(),pt.y());
+        Item item(pt,m_bIsBlackTun);
+        int x=item.m_pt.x();
+        int y=item.m_pt.y();
+        net->items[x][y]=m_bIsBlackTun;
+        net->color=0;
+        //判断是否赢。。。。。
+        //判定四种情况。。。。。
+        net->your_turn=false;
         }
     }
-    if(m_bIsBlackTun==1)
-        m_bIsBlackTun=2;
-    else if(m_bIsBlackTun==2)
-        m_bIsBlackTun=1;
 }
 
 bool MainWindow::yougiveup() {//认输
@@ -388,58 +468,60 @@ bool MainWindow::yougiveup() {//认输
     return true;
 }
 void MainWindow::on_time() {//倒计时
-    if(ww->ui->numedit->text().toInt()!=0){
-        remaining_time=ww->ui->numedit->text().toDouble();//将倒计时赋值给remaining_time
-    }
-    else {
-        remaining_time=30;
-    }
-    if(pressed) {
-        time_now=remaining_time;
-        pressed=false;
-    }
-    time_now-=0.1;//
-    if(m_bIsBlackTun==1) {
-        time_total_black+=0.1;
-    }else {
-        time_total_white+=0.1;
-    }
-    if(time_now<0){
-        out_of_timelimit=true;
-        QImage pool;
-        pool.load(":/new/prefix1/lost.jpg");
-        QPixmap pixmap = QPixmap::fromImage(pool);
-        pixmap = pixmap.scaled(400, 400, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-        this->lb = new QLabel(this);
-        lb->setGeometry(20, 20, 400, 400); // set QLabel size to the scaled size
-        lb->setPixmap(pixmap);
-        lb->show();
-        lb->move(this->width()/2-pixmap.width()*0.7,-pixmap.height()*1.5);
-        QPropertyAnimation * animation =new QPropertyAnimation(lb,"geometry");
-        animation->setDuration(1000);
-        animation->setStartValue(QRect(lb->x(),lb->y(),lb->width(),lb->height()));
-        animation->setEndValue(QRect(lb->x(),lb->y()+pixmap.height()*2,lb->width(),lb->height()));allow_start=false;
-        animation->setEasingCurve(QEasingCurve::OutBounce);
-        animation->start();
-        allow_start=false;
-        time->stop();
-        if(m_items[lastMove.x()][lastMove.y()]==2||m_items[lastMove.x()][lastMove.y()]==0){
-            QString report_message="黑方超时，白方玩家胜利\n 总步数：%1\n游戏总时长: %2\n黑方总思考时长: %3\n白方总思考时长: %4";
-            QString report_mes=report_message.arg(jishu).arg(time_total_black+time_total_white).arg(time_total_black).arg(time_total_white);
-            this->ui->report->setPlainText(report_mes);
-            this->ui->report->setAlignment(Qt::AlignCenter);
-            this->ui->report->show();
+    if(!net->already_connected){
+        if(ww->ui->numedit->text().toInt()!=0){
+            remaining_time=ww->ui->numedit->text().toDouble();//将倒计时赋值给remaining_time
         }
-        if(m_items[lastMove.x()][lastMove.y()]==1){
-            QString report_message="白方超时，黑方玩家胜利\n 总步数：%1\n游戏总时长: %2\n黑方总思考时长: %3\n白方总思考时长: %4";
-            QString report_mes=report_message.arg(jishu).arg(time_total_black+time_total_white).arg(time_total_black).arg(time_total_white);
-            this->ui->report->setPlainText(report_mes);
-            this->ui->report->setAlignment(Qt::AlignCenter);
-            this->ui->report->show();
+        else {
+            remaining_time=30;
         }
-        restat();
+        if(pressed) {
+            time_now=remaining_time;
+            pressed=false;
+        }
+        time_now-=0.1;//
+        if(m_bIsBlackTun==1) {
+            time_total_black+=0.1;
+        }else {
+            time_total_white+=0.1;
+        }
+        if(time_now<0){
+            out_of_timelimit=true;
+            QImage pool;
+            pool.load(":/new/prefix1/lost.jpg");
+            QPixmap pixmap = QPixmap::fromImage(pool);
+            pixmap = pixmap.scaled(400, 400, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            this->lb = new QLabel(this);
+            lb->setGeometry(20, 20, 400, 400); // set QLabel size to the scaled size
+            lb->setPixmap(pixmap);
+            lb->show();
+            lb->move(this->width()/2-pixmap.width()*0.7,-pixmap.height()*1.5);
+            QPropertyAnimation * animation =new QPropertyAnimation(lb,"geometry");
+            animation->setDuration(1000);
+            animation->setStartValue(QRect(lb->x(),lb->y(),lb->width(),lb->height()));
+            animation->setEndValue(QRect(lb->x(),lb->y()+pixmap.height()*2,lb->width(),lb->height()));allow_start=false;
+            animation->setEasingCurve(QEasingCurve::OutBounce);
+            animation->start();
+            allow_start=false;
+            time->stop();
+            if(m_items[lastMove.x()][lastMove.y()]==2||m_items[lastMove.x()][lastMove.y()]==0){
+                QString report_message="黑方超时，白方玩家胜利\n 总步数：%1\n游戏总时长: %2\n黑方总思考时长: %3\n白方总思考时长: %4";
+                QString report_mes=report_message.arg(jishu).arg(time_total_black+time_total_white).arg(time_total_black).arg(time_total_white);
+                this->ui->report->setPlainText(report_mes);
+                this->ui->report->setAlignment(Qt::AlignCenter);
+                this->ui->report->show();
+            }
+            if(m_items[lastMove.x()][lastMove.y()]==1){
+                QString report_message="白方超时，黑方玩家胜利\n 总步数：%1\n游戏总时长: %2\n黑方总思考时长: %3\n白方总思考时长: %4";
+                QString report_mes=report_message.arg(jishu).arg(time_total_black+time_total_white).arg(time_total_black).arg(time_total_white);
+                this->ui->report->setPlainText(report_mes);
+                this->ui->report->setAlignment(Qt::AlignCenter);
+                this->ui->report->show();
+            }
+            restat();
+        }
+        ui->lcdNumber->display(time_now);
     }
-    ui->lcdNumber->display(time_now);
 }
 bool MainWindow::start() {//开始
     if(ww->ui->numedit->text().toInt()!=0){
@@ -458,31 +540,33 @@ bool MainWindow::start() {//开始
     return true;
 }
 bool MainWindow::restarted() {//重开
-    memset(m_items,0,sizeof(m_items));
-    if(ww->ui->numedit->text().toInt()!=0){
-        remaining_time=ww->ui->numedit->text().toDouble();//将倒计时赋值给remaining_time
+    if(!net->already_connected){
+        memset(m_items,0,sizeof(m_items));
+        if(ww->ui->numedit->text().toInt()!=0){
+            remaining_time=ww->ui->numedit->text().toDouble();//将倒计时赋值给remaining_time
+        }
+        else {
+            remaining_time=30;
+        }
+        time_now=remaining_time;
+        ui->lcdNumber->display(time_now);
+        lb->hide();
+        this->ui->reproduce->hide();
+        this->ui->restart->hide();
+        this->ui->report->hide();
+        this->ui->quitButton->show();
+        m_bIsBlackTun=1;
+        allow_start=true;
+        you_lose=false;
+        you_giveup=false;
+        out_of_timelimit=false;
+        time->start();
+        this->ui->setbutton->hide();
+        this->ui->report->hide();
+        jishu=1;
+        reproduced=false;//不是重现的
+        return true;
     }
-    else {
-        remaining_time=30;
-    }
-    time_now=remaining_time;
-    ui->lcdNumber->display(time_now);
-    lb->hide();
-    this->ui->reproduce->hide();
-    this->ui->restart->hide();
-    this->ui->report->hide();
-    this->ui->quitButton->show();
-    m_bIsBlackTun=1;
-    allow_start=true;
-    you_lose=false;
-    you_giveup=false;
-    out_of_timelimit=false;
-    time->start();
-    this->ui->setbutton->hide();
-    this->ui->report->hide();
-    jishu=1;
-    reproduced=false;//不是重现的
-    return true;
 }
 void MainWindow::restat() {//重开的模块化
     this->ui->restart->show();
@@ -494,7 +578,7 @@ void MainWindow::restat() {//重开的模块化
 bool MainWindow::save() {//存储程序
     QFile file("item.txt");
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        qDebug() << "Failed to open file";
+        //qDebug() << "Failed to open file";
         return false;
     }
 
@@ -507,7 +591,7 @@ bool MainWindow::save() {//存储程序
     }
     file.close();
     QString currentPath = QDir::currentPath();
-    qDebug() << "Current working directory: " << currentPath;
+    //qDebug() << "Current working directory: " << currentPath;
     return true;
 }
 
@@ -517,11 +601,11 @@ bool MainWindow::read_in() {//复盘程序
     this->ui->report->hide();
     QFile file("item.txt");
     if (!file.exists()) {
-        qDebug() << "File not found.";
+        //qDebug() << "File not found.";
         return false;
     }
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qDebug() << "Failed to open file";
+        //qDebug() << "Failed to open file";
         return false;
     }
 
@@ -533,15 +617,15 @@ bool MainWindow::read_in() {//复盘程序
     while(!in.atEnd()) {
         in>>str;
         bool ok;
-        qDebug()<<str.right(1);
+        //qDebug()<<str.right(1);
         int x,y;
         x=str.mid(0,str.length()-1).toInt(&ok);//横轴
         if(!ok) {
-            qDebug()<<"Invalid number: "<<str;
+            //qDebug()<<"Invalid number: "<<str;
             break;
         }else {
             y=str.right(1).at(0).unicode()-'A'+1;//纵轴
-            qDebug()<<x<<y;
+            //qDebug()<<x<<y;
         }
         if(num%2==1)
             m_items[x][y]=1;
@@ -549,13 +633,16 @@ bool MainWindow::read_in() {//复盘程序
             m_items[x][y]=2;
         }
         m_steps[x][y]=num;
-        qDebug()<<x<<y<<m_steps[x][y];
+        //qDebug()<<x<<y<<m_steps[x][y];
         num++;
     }
     file.close();
     return true;
 }
-
+bool MainWindow::net_set() {
+    net->show();
+    return true;
+}
 bool MainWindow::setting_show() {//显示设置界面
     ww->show();
     return true;
@@ -570,7 +657,5 @@ void MainWindow::paintEvent(QPaintEvent*)
 {
     DrawCHessBroad();
     DrawItems();
-
     update();
 }
-

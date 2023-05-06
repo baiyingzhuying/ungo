@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #include<QVector>
+#include<QWidget>
 #include"item.h"
 #include <QMainWindow>
 #include<QMessageBox>
@@ -16,6 +17,7 @@
 #include<QThread>
 #include<windows.h>
 #include"setting.h"
+#include"netting.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -87,13 +89,13 @@ public:
     int count_black,count_while;
     bool IsVolume;
     bool setting_show();
-
     bool time_set();
+    bool net_set();
     setting *ww=new setting;
-
+    netting *net=new netting;
 public slots:
     void on_time();
-private:
+public:
     Ui::MainWindow *ui;
 
 protected:

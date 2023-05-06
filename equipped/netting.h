@@ -1,11 +1,10 @@
 
 #ifndef NETTING_H
 #define NETTING_H
-#include<QWidget>
 #include"network/networkserver.h"
 #include"network/networksocket.h"
 #include"ready.h"
-#include"mainwindow.h"
+#include<QLineEdit>
 namespace Ui{
 class netting;
 }
@@ -25,13 +24,26 @@ public:
     QString nameE;
     // 客户端池，NetworkServer 有一个 QList 的，但这里我想用 set，所以又弄了一个
     QSet<QTcpSocket*> clients;
+    QLineEdit *rep;
     Ui::netting *ui;
     int id=0;
-    int real_ip=1;
-    int sendid=0;
+    int sendid=2;
+    int color;
+    int real_color;
+    bool havesend_end_op=false;
+    bool havesend_sui_op=false;
     ready *re=new ready;
-    MainWindow *mw=new MainWindow;
-
+    bool game_start=false;
+    bool you_give_up=false;
+    bool zz=false,rr=false;
+    bool visits[20][20];
+    void checks(int x,int y);
+    void checks2(int x,int y);
+    void checks3(int x,int y);
+    int items[20][20];
+    bool already_start=false;
+    bool already_connected=false;
+    bool your_turn=false;
 private slots:
     void receieveData(QTcpSocket* client, NetworkData data);
     void receieveDataFromServer(NetworkData data);
@@ -43,10 +55,7 @@ private slots:
     void AsBlackClicked();
     void AsWhiteClicked();
     void namesetting();
-    void recdata(NetworkData data);
-    void recdata_AsServer(QTcpSocket* client, NetworkData data);
-    bool goin();
-    bool refusal();
+
 
 };
 

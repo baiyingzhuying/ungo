@@ -12,7 +12,6 @@ MainWindow_01::MainWindow_01(QWidget *parent) :
         MainWindow * game= new MainWindow;
         this->close();
         game->show();
-
     });
     connect(ui->login,&QPushButton::clicked,this,[=](){
         YongHu * user=new YongHu;
@@ -33,7 +32,6 @@ MainWindow_01::MainWindow_01(QWidget *parent) :
             COLLON=13;
         }
     });
-    connect(this->ui->net_setting,&QPushButton::clicked,this,&MainWindow_01::net_setting_show);
 //    if(haveblack){
 //        ui->user_black->setText(Black_player);
 //        qApp->processEvents();
@@ -52,13 +50,13 @@ MainWindow_01::~MainWindow_01()
 
 void MainWindow_01::setWhiteUser(QString &text){
     this->ui->user_white->setText(text);
-    qDebug()<<"2";
+    //qDebug()<<"2";
     Cover->show();
     qApp->processEvents();
 }
 void MainWindow_01::setBlackUser(QString &text){
     this->ui->user_black->setText(text);
-    qDebug()<<"1";
+    //qDebug()<<"1";
     Cover->show();
     qApp->processEvents();
 }

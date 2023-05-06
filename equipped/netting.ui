@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>788</width>
-    <height>319</height>
+    <width>696</width>
+    <height>433</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,12 +19,15 @@
      <x>30</x>
      <y>60</y>
      <width>526</width>
-     <height>278</height>
+     <height>283</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="9" column="1" colspan="4">
-     <widget class="QLineEdit" name="nameshow"/>
+    <item row="6" column="2" colspan="2">
+     <widget class="QLineEdit" name="serverSendEdit"/>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLineEdit" name="clientSendEdit"/>
     </item>
     <item row="1" column="1" colspan="2">
      <widget class="QLineEdit" name="PORTEdit">
@@ -33,6 +36,61 @@
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="0" colspan="2">
+     <widget class="QPushButton" name="StartAsBlack">
+      <property name="text">
+       <string>执黑先行</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0" colspan="4">
+     <widget class="QLineEdit" name="nameEdit"/>
+    </item>
+    <item row="4" column="4">
+     <widget class="QPushButton" name="getButton_2">
+      <property name="text">
+       <string>ServerGet</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="2" colspan="3">
+     <widget class="QPushButton" name="StartAsWhite">
+      <property name="text">
+       <string>执白先行</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="4">
+     <widget class="QPushButton" name="reStartButton">
+      <property name="text">
+       <string>RestartServer</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="2" colspan="2">
+     <widget class="QLineEdit" name="serverGetEdit"/>
+    </item>
+    <item row="1" column="4">
+     <widget class="QPushButton" name="showClientButton">
+      <property name="text">
+       <string>ShowClients</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="4">
+     <widget class="QPushButton" name="serverSendButton">
+      <property name="text">
+       <string>ServerSend</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QPushButton" name="getButton_1">
+      <property name="text">
+       <string>CilentGet</string>
       </property>
      </widget>
     </item>
@@ -46,43 +104,6 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="0">
-     <widget class="QLineEdit" name="clientGetEdit"/>
-    </item>
-    <item row="7" column="0" colspan="4">
-     <widget class="QLineEdit" name="nameEdit"/>
-    </item>
-    <item row="1" column="3">
-     <widget class="QPushButton" name="reSetButton">
-      <property name="text">
-       <string>ReSet</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="2" colspan="3">
-     <widget class="QPushButton" name="StartAsWhite">
-      <property name="text">
-       <string>执白先行</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="4">
-     <widget class="QPushButton" name="showClientButton">
-      <property name="text">
-       <string>ShowClients</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="0">
-     <widget class="QLineEdit" name="clientSendEdit"/>
-    </item>
-    <item row="6" column="1">
-     <widget class="QPushButton" name="clientSendButton">
-      <property name="text">
-       <string>ClientSend</string>
-      </property>
-     </widget>
-    </item>
     <item row="7" column="4">
      <widget class="QPushButton" name="name_setting">
       <property name="text">
@@ -90,25 +111,8 @@
       </property>
      </widget>
     </item>
-    <item row="2" column="4">
-     <widget class="QPushButton" name="reStartButton">
-      <property name="text">
-       <string>RestartServer</string>
-      </property>
-     </widget>
-    </item>
-    <item row="6" column="2" colspan="2">
-     <widget class="QLineEdit" name="serverSendEdit"/>
-    </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="connectLabel">
-      <property name="text">
-       <string>Connection fail</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
+    <item row="4" column="0">
+     <widget class="QLineEdit" name="clientGetEdit"/>
     </item>
     <item row="2" column="2" colspan="2">
      <widget class="QLabel" name="lastOneLabel">
@@ -120,17 +124,30 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="4">
-     <widget class="QPushButton" name="getButton_2">
+    <item row="9" column="1" colspan="4">
+     <widget class="QLineEdit" name="nameshow"/>
+    </item>
+    <item row="1" column="3">
+     <widget class="QPushButton" name="reSetButton">
       <property name="text">
-       <string>ServerGet</string>
+       <string>ReSet</string>
       </property>
      </widget>
     </item>
-    <item row="8" column="0" colspan="2">
-     <widget class="QPushButton" name="StartAsBlack">
+    <item row="2" column="0">
+     <widget class="QLabel" name="connectLabel">
       <property name="text">
-       <string>执黑先行</string>
+       <string>Connection fail</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QPushButton" name="clientSendButton">
+      <property name="text">
+       <string>ClientSend</string>
       </property>
      </widget>
     </item>
@@ -141,13 +158,6 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="1">
-     <widget class="QPushButton" name="getButton_1">
-      <property name="text">
-       <string>CilentGet</string>
-      </property>
-     </widget>
-    </item>
     <item row="9" column="0">
      <widget class="QPushButton" name="pushButton">
       <property name="text">
@@ -155,17 +165,14 @@
       </property>
      </widget>
     </item>
-    <item row="4" column="2" colspan="2">
-     <widget class="QLineEdit" name="serverGetEdit"/>
-    </item>
-    <item row="6" column="4">
-     <widget class="QPushButton" name="serverSendButton">
+    <item row="0" column="0">
+     <widget class="QPushButton" name="byebye">
       <property name="text">
-       <string>ServerSend</string>
+       <string>溜了溜了</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="0" colspan="5">
+    <item row="0" column="1" colspan="4">
      <widget class="QLineEdit" name="messhow"/>
     </item>
    </layout>
