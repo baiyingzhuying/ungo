@@ -5,7 +5,7 @@
 #include"ready.h"
 #include<QLineEdit>
 #include"chat.h"
-
+#include<QDateTime>
 
 namespace Ui{
 class netting;
@@ -53,6 +53,7 @@ public:
     bool already_connected=false;
     bool your_turn=false;
     Chat * chat=new Chat;
+    QDateTime timee;
 private slots:
     void receieveData(QTcpSocket* client, NetworkData data);
     void receieveDataFromServer(NetworkData data);

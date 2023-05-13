@@ -8,6 +8,7 @@
 #include<QPainter>
 #include"mainwindow.h"
 #include"mainwindow_01.h"
+#include"QDateTime"
 #include"chat.h"
 #include "ui_chat.h"
 #include <QtDebug>
@@ -82,8 +83,8 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
 {
 
     int x,y;
-    qint64 rec_time=0;
-    qint64 time_now_=0;
+   // qint64 rec_time=0;
+    //qint64 time_now_=0;
     QChar zy;
     qDebug()<<"Server get a data: "<<client<<" "<<data.encode();
     lastOne=client;
@@ -99,8 +100,9 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
     clients.insert(client);
     QDateTime current;
     QString time = current.currentDateTime().toString("MMM dd hh:mm::ss");
-    QString info = time + " " + "Opponent" + "\n" + data.data1;
-
+    QString info;
+    timee=QDateTime::currentDateTime();
+    timee.toString("yyy-MM-dd hh:mm::ss");
     switch(data.op) {
     case OPCODE::GIVEUP_END_OP:
         if(!havesend_end_op){
@@ -108,6 +110,7 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
             havesend_end_op=true;
             color=0;
         }
+        info = time + " " + "Opponent" + " " +"GIVEUP_END_OP "+data.data1+ " "+data.data2+"\n";
         break;
     case OPCODE::GIVEUP_OP:
         //qDebug()<<real_color<<you_give_up;
@@ -132,11 +135,13 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
                 color=0;
             }
         }
+        info = time + " " + "Opponent" + " " +"GIVEUP_OP "+data.data1+ " "+data.data2+"\n";
         break;
     case OPCODE::READY_OP:
+        memset(items,0,sizeof(items));
         already_connected=true;
         qDebug()<<already_connected;
-        game->time_now=game->remaining_time=10;
+        game->time_now=game->remaining_time=5;
         //qDebug()<<"ready";
         //qDebug()<<id<<sendid;
         if(id!=sendid) {
@@ -152,7 +157,7 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
                     color=1;
                     real_color=1;
                     your_turn=true;
-                    this->server->send(lastOne,NetworkData(OPCODE::READY_OP,this->ui->nameEdit->text(),"hhhh"));
+                    this->server->send(lastOne,NetworkData(OPCODE::READY_OP,this->ui->nameEdit->text(),"b"));
 
                 });
             }else if(data.data2=='b'){
@@ -165,7 +170,7 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
                     this->close();
                     color=2;
                     real_color=2;
-                    this->server->send(lastOne,NetworkData(OPCODE::READY_OP,this->ui->nameEdit->text(),"hhhh"));
+                    this->server->send(lastOne,NetworkData(OPCODE::READY_OP,this->ui->nameEdit->text(),"w"));
                 });
             }
         }else if(id==sendid){
@@ -173,11 +178,14 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
 //            Chat * chat=new Chat;
             chat->show();
         }
+        info = time + " " + "Opponent" + " " +"READY_OP "+data.data1+ " "+data.data2+"\n";
         break;
     case OPCODE::LEAVE_OP:
+        info = time + " " + "Opponent" + " " +"LEAVE_OP "+data.data1+ " "+data.data2+"\n";
         break;
     case OPCODE::CHAT_OP:      
         chat->ui->chatHistoryEdit->appendPlainText(info+"\n");
+        info = time + " " + "Opponent" + " " +"CHAT_OP "+data.data1+ " "+data.data2+"\n";
         break;
     case OPCODE::MOVE_OP:
         have_send_move_op=false;
@@ -190,8 +198,8 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
         x=data.data1.mid(1).toInt();
         y=zy.toLatin1()-'A'+1;
         color=real_color;
-        rec_time=data.data2.toLongLong();
-        time_now_=QDateTime::currentMSecsSinceEpoch();
+        //rec_time=data.data2.toLongLong();
+        //time_now_=QDateTime::currentMSecsSinceEpoch();
 
         if(items[x][y]) {
             this->server->send(lastOne,NetworkData(OPCODE::SUICIDE_END_OP,this->nameE,""));
@@ -201,14 +209,14 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
             color=0;
             return;
         }else{
-            if(time_now_-rec_time>game->remaining_time) {
-                this->server->send(lastOne,NetworkData(OPCODE::TIMEOUT_END_OP,this->nameE,""));
-                game->ui->report->setText("对方超时了，你赢了");
-                game->ui->report->show();
-                have_send_time_out_op=true;
-                color=0;
-                return;
-            }
+//            if(time_now_-rec_time>game->remaining_time*1000) {
+//                this->server->send(lastOne,NetworkData(OPCODE::TIMEOUT_END_OP,this->nameE,""));
+//                game->ui->report->setText("对方超时了，你赢了");
+//                game->ui->report->show();
+//                have_send_time_out_op=true;
+//                color=0;
+//                return;
+//            }
         items[x][y]=3-real_color;
         qDebug()<<x<<y;
         zz=false,rr=false;
@@ -227,6 +235,8 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
         }
 
         }
+        info = time + " " + "Opponent" + " " +"MOVE_OP "+data.data1+ " "+data.data2+"\n";
+        game->ui->quitButton->show();
         break;
     case OPCODE::REJECT_OP:
         if(id!=sendid) {
@@ -235,12 +245,22 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
             this->ui->messhow->setText(QString("You have rejected an invitation"));
         }
         your_turn=false;
+        info = time + " " + "Opponent" + " " +"REJECT_OP "+data.data1+ " "+data.data2+"\n";
         break;
     case OPCODE::SUICIDE_END_OP:
-
+        info = time + " " + "sender" + " " +"SUICIDE_END_OP "+data.data1+ " "+data.data2+"\n";
         if(!havesend_sui_op) {
             received_suicide_end_op=true;
             havesend_sui_op=true;
+            QFile file("daily.txt");
+            if (!file.open(QIODevice::Append | QIODevice::Text)) {
+            //qDebug() << "Failed to open file";
+            return;
+            }
+
+            QTextStream out(&file);
+            out<<info;
+            file.close();
             this->server->send(lastOne,NetworkData(OPCODE::SUICIDE_END_OP,this->nameE,""));
         }
 
@@ -249,6 +269,7 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
             game->ui->report->show();
             color=0;
         }
+        info = time + " " + "Opponent" + " " +"SUICIDE_END_OP "+data.data1+ " "+data.data2+"\n";
         break;
     case OPCODE::TIMEOUT_END_OP:
         received_time_out=true;
@@ -260,9 +281,22 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
             color=0;
 
         }
+        info = time + " " + "Opponent" + " " +"TIMEOUT_END_OP "+data.data1+ " "+data.data2+"\n";
         break;
     default: break;
     }
+    QFile file("daily.txt");
+    if (!file.open(QIODevice::Append | QIODevice::Text)) {
+        //qDebug() << "Failed to open file";
+        return;
+    }
+
+    QTextStream out(&file);
+    out<<info;
+    file.close();
+    //QString currentPath = QDir::currentPath();
+    //qDebug() << "Current working directory: " << currentPath;
+    //return true;
 }
 
 void netting::receieveDataFromServer(NetworkData data)
@@ -271,7 +305,6 @@ void netting::receieveDataFromServer(NetworkData data)
     qint64 rec_time=0;
     qint64 time_now_=0;
     QChar zy;
-
     qDebug()<<"Client get a data: "<<data.encode();
     this->ui->clientGetEdit->setText(data.data1);
     qDebug()<<"qwq"<<(data.op==OPCODE::READY_OP);
@@ -280,7 +313,6 @@ void netting::receieveDataFromServer(NetworkData data)
     QString time = current.currentDateTime().toString("MMM dd hh:mm::ss");
     QString info = time + " " + "Opponent" + "\n" + data.data1;
     //qDebug()<<id<<sendid;
-
     //qDebug() << (data.op==OPCODE::READY_OP);
     switch(data.op) {
     case OPCODE::GIVEUP_END_OP:
@@ -289,6 +321,7 @@ void netting::receieveDataFromServer(NetworkData data)
             havesend_end_op=true;
             color=0;
         }
+        info = time + " " + "Opponent" + " " +"GIVEUP_END_OP "+data.data1+ " "+data.data2+"\n";
         break;
     case OPCODE::GIVEUP_OP:
         received_give_up_op=true;
@@ -310,12 +343,14 @@ void netting::receieveDataFromServer(NetworkData data)
                 color=0;
             }
         }
+        info = time + " " + "Opponent" + " " +"GIVEUP_OP "+data.data1+ " "+data.data2+"\n";
         break;
     case OPCODE::READY_OP:
+        memset(items,0,sizeof(items));
         already_connected=true;
         qDebug()<<already_connected;
         //qDebug()<<"ready";
-        game->time_now=game->remaining_time=10;
+        game->time_now=game->remaining_time=5;
         if(id!=sendid) {
             if(data.data2=='w'){
                 re->ui->lineEdit->setText("对方希望执白先行，同意开始游戏吗？");
@@ -331,7 +366,7 @@ void netting::receieveDataFromServer(NetworkData data)
                     color=1;
                     real_color=1;
                     your_turn=true;
-                    this->socket->send(NetworkData(OPCODE::READY_OP,this->nameE,"hhhh"));
+                    this->socket->send(NetworkData(OPCODE::READY_OP,this->nameE,"b"));
 
                 });
             }else if(data.data2=='b'){
@@ -345,7 +380,7 @@ void netting::receieveDataFromServer(NetworkData data)
                     real_color=2;
                     re->close();
                     this->close();
-                    this->socket->send(NetworkData(OPCODE::READY_OP,this->nameE,"hhhhh"));
+                    this->socket->send(NetworkData(OPCODE::READY_OP,this->nameE,"w"));
                 });
             }
         }else {
@@ -354,12 +389,15 @@ void netting::receieveDataFromServer(NetworkData data)
 //            Chat * chat=new Chat;
             chat->show();
         }
+        info = time + " " + "Opponent" + " " +"READY_OP "+data.data1+ " "+data.data2+"\n";
         break;
     case OPCODE::LEAVE_OP:
         this->socket->bye();
+        info = time + " " + "Opponent" + " " +"LEAVE_OP "+data.data1+ " "+data.data2+"\n";
         break;
     case OPCODE::CHAT_OP:
         chat->ui->chatHistoryEdit->appendPlainText(info+"\n");
+        info = time + " " + "Opponent" + " " +"TIMEOUT_END_OP "+data.data1+ " "+data.data2+"\n";
         break;
     case OPCODE::MOVE_OP:
         have_send_move_op=false;
@@ -385,14 +423,14 @@ void netting::receieveDataFromServer(NetworkData data)
             color=0;
             return;
         }else{
-            if(time_now_-rec_time>game->remaining_time) {
-                this->socket->send(NetworkData(OPCODE::TIMEOUT_END_OP,this->nameE,""));
-                game->ui->report->setText("对方超时了，你赢了");
-                game->ui->report->show();
-                have_send_time_out_op=true;
-                color=0;
-                return;
-            }
+//            if(time_now_-rec_time>game->remaining_time*1000) {
+//                this->socket->send(NetworkData(OPCODE::TIMEOUT_END_OP,this->nameE,""));
+//                game->ui->report->setText("对方超时了，你赢了");
+//                game->ui->report->show();
+//                have_send_time_out_op=true;
+//                color=0;
+//                return;
+//            }
         items[x][y]=3-real_color;
         qDebug()<<items[x][y];
         zz=false,rr=false;
@@ -409,8 +447,9 @@ void netting::receieveDataFromServer(NetworkData data)
             color=0;
             return ;
         }
-
+        info = time + " " + "Opponent" + " " +"MOVE_OP "+data.data1+ " "+data.data2+"\n";
         }
+        game->ui->quitButton->show();
         break;
     case OPCODE::REJECT_OP:
         if(id==1) this->socket->send(NetworkData(OPCODE::REJECT_OP,this->ui->nameEdit->text(),"hhhhh"));
@@ -421,6 +460,7 @@ void netting::receieveDataFromServer(NetworkData data)
             this->ui->messhow->setText(QString("You have rejected an invitation"));
         }
         your_turn=false;
+        info = time + " " + "Opponent" + " " +"REJECT_OP "+data.data1+ " "+data.data2+"\n";
         break;
     case OPCODE::SUICIDE_END_OP:
 
@@ -439,6 +479,7 @@ void netting::receieveDataFromServer(NetworkData data)
             game->ui->report->show();
             color=0;
         }
+        info = time + " " + "Opponent" + " " +"SUICIDE_END_OP "+data.data1+ " "+data.data2+"\n";
         break;
     case OPCODE::TIMEOUT_END_OP:
         received_time_out=true;
@@ -449,11 +490,19 @@ void netting::receieveDataFromServer(NetworkData data)
             this->socket->send(NetworkData(OPCODE::TIMEOUT_END_OP,this->nameE,""));
             color=0;
         }
-
+        info = time + " " + "Opponent" + " " +"TIMEOUT_END_OP "+data.data1+ " "+data.data2+"\n";
         break;
     default: break;
     }
+    QFile file("daily.txt");
+    if (!file.open(QIODevice::Append | QIODevice::Text)) {
+        //qDebug() << "Failed to open file";
+        return;
+    }
 
+    QTextStream out(&file);
+    out<<info;
+    file.close();
     // recdata(data);
 }
 
@@ -465,31 +514,72 @@ void netting::onClientSendButtonClicked()
 void netting::AsWhiteClicked() {
     //qDebug()<<"white";
     color=2;
+    QDateTime current;
+    QString time = current.currentDateTime().toString("MMM dd hh:mm::ss");
+    QString info;
     real_color=2;
     if(id==1){
         sendid=1;
         //qDebug()<<"white";
+        info = time + " " + "sender" + " " +"READY_OP "+nameE+ " "+"w"+"\n";
+        QFile file("daily.txt");
+        if (!file.open(QIODevice::Append | QIODevice::Text)) {
+            //qDebug() << "Failed to open file";
+            return;
+        }
+
+        QTextStream out(&file);
+        out<<info;
         this->socket->send(NetworkData(OPCODE::READY_OP,this->ui->nameEdit->text(),"w"));
     }
     else {
         sendid=0;
         if(lastOne){
+            info = time + " " + "sender" + " " +"READY_OP "+nameE+ " "+"w"+"\n";
+            QFile file("daily.txt");
+            if (!file.open(QIODevice::Append | QIODevice::Text)) {
+            //qDebug() << "Failed to open file";
+            return;
+            }
+
+            QTextStream out(&file);
+            out<<info;
             this->server->send(lastOne,NetworkData(OPCODE::READY_OP,this->ui->nameEdit->text(),"w"));
         }
     }
 }
 void netting::AsBlackClicked() {
     color=1;
+    QDateTime current;
+    QString time = current.currentDateTime().toString("MMM dd hh:mm::ss");
+    QString info;
     real_color=1;
     //qDebug()<<"black";
     if(id==1){
         sendid=1;
-        this->socket->send(NetworkData(OPCODE::READY_OP,this->ui->nameEdit->text(),"b"));
+        info = time + " " + "sender" + " " +"READY_OP "+nameE+ " "+"b"+"\n";
+        QFile file("daily.txt");
+        if (!file.open(QIODevice::Append | QIODevice::Text)) {
+            //qDebug() << "Failed to open file";
+            return;
+        }
+
+        QTextStream out(&file);
+        out<<info;
+        this->socket->send(NetworkData(OPCODE::READY_OP,nameE,"b"));
 
     }else {
         sendid=0;
         if(lastOne){
-            this->server->send(lastOne,NetworkData(OPCODE::READY_OP,this->ui->nameEdit->text(),"b"));
+            info = time + " " + "sender" + " " +"READY_OP "+nameE+ " "+"b"+"\n";
+            QFile file("daily.txt");
+            if (!file.open(QIODevice::Append | QIODevice::Text)) {
+            //qDebug() << "Failed to open file";
+            return;
+            }
+            QTextStream out(&file);
+            out<<info;
+            this->server->send(lastOne,NetworkData(OPCODE::READY_OP,nameE,"b"));
         }
     }
     your_turn=true;
@@ -497,8 +587,9 @@ void netting::AsBlackClicked() {
 //
 void netting::onServerSendButtonClicked()
 {
-    if(lastOne)
+    if(lastOne){
         this->server->send(lastOne,NetworkData(OPCODE::CHAT_OP,this->ui->serverSendEdit->text(),"send by server"));
+    }
 }
 
 void netting::reStart()
@@ -627,9 +718,28 @@ void netting::checks2(int x,int y) {
 }
 
 void netting::send_OP(QString info){
+    QDateTime current;
+    QString time = current.currentDateTime().toString("MMM dd hh:mm::ss");
+    QString ww;
     if(id==0){
+        ww = time + " " + "sender" + " " +"CHAT_OP "+info+ " "+""+"\n";
+        QFile file("daily.txt");
+        if (!file.open(QIODevice::Append | QIODevice::Text)) {
+            //qDebug() << "Failed to open file";
+            return;
+        }
+        QTextStream out(&file);
+        out<<ww;
         this->server->send(lastOne,NetworkData(OPCODE::CHAT_OP,info,""));
     }else{
+        ww = time + " " + "sender" + " " +"CHAT_OP "+info+ " "+""+"\n";
+        QFile file("daily.txt");
+        if (!file.open(QIODevice::Append | QIODevice::Text)) {
+            //qDebug() << "Failed to open file";
+            return;
+        }
+        QTextStream out(&file);
+        out<<ww;
         this->socket->send(NetworkData(OPCODE::CHAT_OP,info,""));
     }
 }

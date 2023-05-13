@@ -62,17 +62,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->ui->setbutton,&QPushButton::clicked,this,&MainWindow::setting_show);
     connect(ww->ui->sure,&QPushButton::clicked,this,&MainWindow::time_set);
     connect(this->ui->net_setting,&QPushButton::clicked,this,&MainWindow::net_set);
-    connect(this->ui->quitButton,&QPushButton::clicked,this,[=](){
-        if(net->id==1) {
-            this->ui->report->setText("你选择认输");
-            net->socket->send(NetworkData(OPCODE::GIVEUP_OP,net->nameE,"GLHF"));
-        }else{
-            this->ui->report->setText("你选择认输");
-            net->server->send(net->lastOne,NetworkData(OPCODE::GIVEUP_OP,net->nameE,"GLHF"));
-        }
-        net->you_give_up=true;
-        //qDebug()<<net->you_give_up;
-    });
     //    QStatusBar *statusBar = new QStatusBar(this);
     //    setStatusBar(statusBar);
     //    QSoundEffect * BGM=new QSoundEffect;
@@ -394,7 +383,6 @@ void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了�
             m_bIsBlackTun=1;
     }else {//用来写网络链接后
         qDebug()<<net->already_connected;
-
         qDebug()<<net->your_turn;
         net_pressed=true;
         if(net->your_turn==true){
@@ -413,32 +401,50 @@ void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了�
             QString move_op=move_y+move_x;
             timestamp=QDateTime::currentMSecsSinceEpoch();
             QString times_op=QString::number(timestamp);
-            qDebug()<<move_op;
+            qDebug()<<timestamp;
+            QDateTime current;
+            QString timerw = current.currentDateTime().toString("MMM dd hh:mm::ss");
+            QString info;
             if(net->color!=0){
-            if(net->id==1) {
-                net->socket->send(NetworkData(OPCODE::MOVE_OP,move_op,times_op));
+                if(net->id==1) {
+                    info = timerw + " " + "sender" + " " +"MOVE_OP "+move_op+ " "+times_op+"\n";
+                    QFile file("daily.txt");
+                    if (!file.open(QIODevice::Append | QIODevice::Text)) {
+                        //qDebug() << "Failed to open file";
+                    }
+                    QTextStream out(&file);
+                    out<<info;
+                    net->socket->send(NetworkData(OPCODE::MOVE_OP,move_op,times_op));
                     time->start();
                     time_now=remaining_time;
-            }else {
-                net->server->send(net->lastOne,NetworkData(OPCODE::MOVE_OP,move_op,times_op));
+                }else {
+                    info = timerw + " " + "sender" + " " +"MOVE_OP "+move_op+ " "+times_op+"\n";
+                    QFile file("daily.txt");
+                    if (!file.open(QIODevice::Append | QIODevice::Text)) {
+                        //qDebug() << "Failed to open file";
+                    }
+                    QTextStream out(&file);
+                    out<<info;
+                    net->server->send(net->lastOne,NetworkData(OPCODE::MOVE_OP,move_op,times_op));
                     time->start();
                     time_now=remaining_time;
+                }
+                net->have_send_move_op=true;
+                net->received_move_op=false;
+                items[jishu++]=node{m_bIsBlackTun,pt.x(),pt.y(),jishu};
+                lastMove=QPoint(pt.x(),pt.y());
+                Item item(pt,m_bIsBlackTun);
+                int x=item.m_pt.x();
+                int y=item.m_pt.y();
+                net->items[x][y]=m_bIsBlackTun;
+                net->color=0;
+                //判断是否赢。。。。。
+                //判定四种情况。。。。。
+                net->your_turn=false;
+                this->ui->quitButton->hide();
             }
-            net->have_send_move_op=true;
-            net->received_move_op=false;
-            items[jishu++]=node{m_bIsBlackTun,pt.x(),pt.y(),jishu};
-            lastMove=QPoint(pt.x(),pt.y());
-            Item item(pt,m_bIsBlackTun);
-            int x=item.m_pt.x();
-            int y=item.m_pt.y();
-            net->items[x][y]=m_bIsBlackTun;
-            net->color=0;
-            //判断是否赢。。。。。
-            //判定四种情况。。。。。
-            net->your_turn=false;
         }
     }
-}
 }
 
 bool MainWindow::yougiveup() {//认输
@@ -475,9 +481,31 @@ bool MainWindow::yougiveup() {//认输
             this->ui->report->show();
         }
     }else{
-
-
-
+        QDateTime current;
+        QString time = current.currentDateTime().toString("MMM dd hh:mm::ss");
+        QString info;
+        if(net->id==1) {
+            info = time + " " + "sender" + " " +"GIVEUP_OP "+net->nameE+ " "+"GLHF"+"\n";
+            QFile file("daily.txt");
+            if (!file.open(QIODevice::Append | QIODevice::Text)) {
+                //qDebug() << "Failed to open file";
+            }
+            QTextStream out(&file);
+            out<<info;
+            this->ui->report->setText("你选择认输");
+            net->socket->send(NetworkData(OPCODE::GIVEUP_OP,net->nameE,"GLHF"));
+        }else{
+            info = time + " " + "sender" + " " +"GIVEUP_OP "+net->nameE+ " "+"GLHF"+"\n";
+            QFile file("daily.txt");
+            if (!file.open(QIODevice::Append | QIODevice::Text)) {
+                //qDebug() << "Failed to open file";
+            }
+            QTextStream out(&file);
+            out<<info;
+            this->ui->report->setText("你选择认输");
+            net->server->send(net->lastOne,NetworkData(OPCODE::GIVEUP_OP,net->nameE,"GLHF"));
+        }
+        net->you_give_up=true;
     }
     this->ui->setbutton->show();
     this->ui->quitButton->hide();
@@ -540,12 +568,14 @@ void MainWindow::on_time() {//倒计时
         }
         ui->lcdNumber->display(time_now);
     }else {
-
+        QDateTime current;
+        QString timerw = current.currentDateTime().toString("MMM dd hh:mm::ss");
+        QString info;
         if(ww->ui->numedit->text().toInt()!=0){
             remaining_time=ww->ui->numedit->text().toDouble();//将倒计时赋值给remaining_time
         }
         else {
-            remaining_time=30;
+            remaining_time=5;
         }
         qDebug()<<net->have_send_move_op;
         qDebug()<<"this is time_now :"<<time_now;
@@ -557,12 +587,25 @@ void MainWindow::on_time() {//倒计时
                     this->ui->report->setText("对方超时了，你赢了");
                     this->ui->report->show();
                     time->stop();
+                    info = timerw + " " + "sender" + " " +"TIMEOUT_END_OP "+net->nameE+ " "+"b"+"\n";
+                    QFile file("daily.txt");
+                    if (!file.open(QIODevice::Append | QIODevice::Text)) {
+                        //qDebug() << "Failed to open file";
+                    }
+                    QTextStream out(&file);
+                    out<<info;
                     net->socket->send(NetworkData(OPCODE::TIMEOUT_END_OP,net->nameE,""));
                 }else {
                     net->have_send_time_out_op=true;
                     this->ui->report->setText("对方超时了，你赢了");
                     this->ui->report->show();
                     time->stop();
+                    info = timerw + " " + "sender" + " " +"TIMEOUT_END_OP "+net->nameE+ " "+"b"+"\n";
+                    QFile file("daily.txt");
+                    if (!file.open(QIODevice::Append | QIODevice::Text)) {
+                        //qDebug() << "Failed to open file";
+                    }
+                    QTextStream out(&file);
                     net->server->send(net->lastOne,NetworkData(OPCODE::TIMEOUT_END_OP,net->nameE,""));
                 }
             }
@@ -613,6 +656,56 @@ bool MainWindow::restarted() {//重开
         jishu=1;
         reproduced=false;//不是重现的
         return true;
+    }else {
+        QDateTime current;
+        QString time = current.currentDateTime().toString("MMM dd hh:mm::ss");
+        QString info;
+        if(net->id==1) {
+            if(net->real_color==1){
+                info = time + " " + "sender" + " " +"READY_OP "+net->nameE+ " "+"b"+"\n";
+                QFile file("daily.txt");
+                if (!file.open(QIODevice::Append | QIODevice::Text)) {
+                    //qDebug() << "Failed to open file";
+                }
+                QTextStream out(&file);
+                out<<info;
+                net->socket->send(NetworkData(OPCODE::READY_OP,net->nameE,"b"));
+            }
+            else{
+                if(net->real_color==1){
+                    info = time + " " + "sender" + " " +"READY_OP "+net->nameE+ " "+"b"+"\n";
+                    QFile file("daily.txt");
+                    if (!file.open(QIODevice::Append | QIODevice::Text)) {
+                        //qDebug() << "Failed to open file";
+                    }
+                    QTextStream out(&file);
+                    out<<info;
+                    net->socket->send(NetworkData(OPCODE::READY_OP,net->nameE,"w"));}
+            }
+        }else {
+            if(net->real_color==1){
+                info = time + " " + "sender" + " " +"READY_OP "+net->nameE+ " "+"b"+"\n";
+                QFile file("daily.txt");
+                if (!file.open(QIODevice::Append | QIODevice::Text)) {
+                    //qDebug() << "Failed to open file";
+                }
+                QTextStream out(&file);
+                out<<info;
+                net->server->send(net->lastOne,NetworkData(OPCODE::READY_OP,net->nameE,"b"));
+            }
+            else{
+                if(net->real_color==1){
+                    info = time + " " + "sender" + " " +"READY_OP "+net->nameE+ " "+"b"+"\n";
+                    QFile file("daily.txt");
+                    if (!file.open(QIODevice::Append | QIODevice::Text)) {
+                        //qDebug() << "Failed to open file";
+                    }
+                    QTextStream out(&file);
+                    out<<info;
+                    net->server->send(net->lastOne,NetworkData(OPCODE::READY_OP,net->nameE,"w"));}
+            }
+        }
+
     }
 }
 void MainWindow::restat() {//重开的模块化
@@ -635,6 +728,9 @@ bool MainWindow::save() {//存储程序
     }
     if(you_giveup) {
         out<<"G";
+    }
+    if(out_of_timelimit) {
+        out<<"T";
     }
     file.close();
     QString currentPath = QDir::currentPath();
