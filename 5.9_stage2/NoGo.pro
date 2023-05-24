@@ -11,6 +11,7 @@ CONFIG += c++17
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 SOURCES += \
+    ai.cpp \
     chat.cpp \
     item.cpp \
     main.cpp \
@@ -26,6 +27,7 @@ SOURCES += \
 
 
 HEADERS += \
+    ai.h \
     chat.h \
     item.h \
     mainwindow.h \
@@ -52,12 +54,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    BGM.qrc \
-    WAV.qrc \
     button.qrc \
     giveup.qrc \
-    leishen.qrc \
-    leishen2.qrc \
     mikubcg.qrc \
     newback.qrc \
     pic.qrc \
@@ -66,9 +64,7 @@ RESOURCES += \
     result.qrc \
     start.qrc \
     start.qrc \
-    time.qrc \
-    zhenghuo.qrc \
-    zhongli.qrc
+    time.qrc
 
 DISTFILES += \
     image/help.png \

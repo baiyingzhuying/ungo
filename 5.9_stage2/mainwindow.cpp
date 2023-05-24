@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include"ai.h"
 #include "ui_mainwindow.h"
 #include"mainwindow_01.h"
 #include"setting.h"
@@ -61,6 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(this->ui->reproduce,&QPushButton::clicked,this,&MainWindow::read_in);//读入
     connect(this->ui->setbutton,&QPushButton::clicked,this,&MainWindow::setting_show);
     connect(ww->ui->sure,&QPushButton::clicked,this,&MainWindow::time_set);
+    connect(this->ui->AI_start,&QPushButton::clicked,this,&MainWindow::inite);//这样我们就实现了信息的传递
     connect(this->ui->net_setting,&QPushButton::clicked,this,&MainWindow::net_set);
     //    QStatusBar *statusBar = new QStatusBar(this);
     //    setStatusBar(statusBar);
@@ -290,9 +292,8 @@ void MainWindow::check2(int x,int y) {//落子不吃子
 //落子程序
 void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了，别动
     qDebug()<<net->already_connected;
-    if(!net->already_connected){
-        if(!allow_start||you_lose||you_giveup||out_of_timelimit) return;
-        pressed=true;
+    if(!net->already_connected){//没联网
+        if(!allow_start||you_lose||you_giveup||out_of_timelimit) return;//没开始，或者输了，认输，超时，都不能落子
         QPoint pt;
         int chess_x=event->pos().x()+WIDTH/2;//获取鼠标点击的x坐标
         int chess_y=event->pos().y()+HEIGHT/2;//y坐标
@@ -301,8 +302,11 @@ void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了�
         if(pt.x()>=ROW+1||pt.y()>=COLLON+1||pt.x()<1||pt.y()<1) {
             return;
         }
+        qDebug()<<pt.x();
         //循环所有棋子判断落子出是否存在棋子
         if(m_items[pt.x()][pt.y()]!=0) return;
+        pressed=true;//落子成功
+
         items[jishu++]=node{m_bIsBlackTun,pt.x(),pt.y(),jishu};
         lastMove=QPoint(pt.x(),pt.y());
         Item item(pt,m_bIsBlackTun);
@@ -341,6 +345,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了�
                 return;
             }
             you_lose=true;
+            //这一段都是显示一个动画用的，不用管
             QImage pool;
             pool.load(":/new/prefix1/lost.jpg");
             QPixmap pixmap = QPixmap::fromImage(pool);
@@ -407,6 +412,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了�
             QString info;
             if(net->color!=0){
                 if(net->id==1) {
+                    //客户端发送move_op
                     info = timerw + " " + "sender" + " " +"MOVE_OP "+move_op+ " "+times_op+"\n";
                     QFile file("daily.txt");
                     if (!file.open(QIODevice::Append | QIODevice::Text)) {
@@ -418,6 +424,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event){//落点位置，改好了�
                     time->start();
                     time_now=remaining_time;
                 }else {
+                    //服务端发送move_op
                     info = timerw + " " + "sender" + " " +"MOVE_OP "+move_op+ " "+times_op+"\n";
                     QFile file("daily.txt");
                     if (!file.open(QIODevice::Append | QIODevice::Text)) {
@@ -802,4 +809,38 @@ void MainWindow::paintEvent(QPaintEvent*)
     DrawCHessBroad();
     DrawItems();
     update();
+}
+bool MainWindow::inite() {//好，现在我们成功的把信息传过去了，那么我们要开始搜索了
+    state->unionSet->init();
+    qDebug()<<1;
+    int all=81;
+    for(int i=1;i<=ROW;i++) {
+        for(int j=1;j<=ROW;j++) {
+            if(m_items[i][j]) {
+                all--;
+                int id = state->unionSet->pos_to_id[i][j];
+                state->unionSet->color[i][j] = m_items[i][j];
+                for (int k = 0; k < 6; k++)
+                    if (state->unionSet->check1(i + state->unionSet->dx[k], j + state->unionSet->dy[k]) && state->unionSet->color[i + state->unionSet->dx[k]][j + state->unionSet->dy[k]] == state->unionSet->col)
+                        state->unionSet->merge(id, state->unionSet->pos_to_id[i + state->unionSet->dx[k]][j + state->unionSet->dy[k]]);//遍历当前元素周围的六个方向，如果邻居元素存在且与当前元素具有相同的颜色，则将它们进行合并操作
+                state->unionSet->col=game->m_bIsBlackTun;
+            }
+            qDebug()<<i<<j;
+        }
+    }
+    if(m_bIsBlackTun==1) {
+        state->node1->player=0;
+    }else {
+        state->node1->player=1;
+    }
+    state->node1->parent=NULL;
+    state->node1->nChild=all;
+    state->node1->nExpand=0;
+    state->node1->child.resize(all);
+    state->node1->index=poss(-1,-1);
+    state->node1->cntWin=state->node1->cntAll=0;
+    qDebug()<<1;
+    poss net=state->mctsSearch(state->node1,state->unionSet);
+    qDebug()<<net.first<<net.second;
+    return true;
 }

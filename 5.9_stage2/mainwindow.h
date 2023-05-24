@@ -18,6 +18,7 @@
 #include<windows.h>
 #include"setting.h"
 #include"netting.h"
+#include"ai.h"
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -92,10 +93,11 @@ public:
     bool time_set();
     bool net_set();
     bool net_pressed=false;
-
+    bool inite();
     qint64 timestamp=0;
     setting *ww=new setting;
     netting *net=new netting;
+    Ai *state=new Ai;
 public slots:
     void on_time();
 public:

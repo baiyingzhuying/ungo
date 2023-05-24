@@ -25,7 +25,7 @@ Chat::Chat(QWidget *parent) :
     // 信号槽
     connect(this->ui->sendButton,&QPushButton::clicked,this,&Chat::send);
 }
-
+//发送信息
 bool Chat::send(){
     QString text = this->ui->chatEdit->text();
     QString username = this->usernameEdit->text();

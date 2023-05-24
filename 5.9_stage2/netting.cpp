@@ -204,6 +204,7 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
         if(items[x][y]) {
             this->server->send(lastOne,NetworkData(OPCODE::SUICIDE_END_OP,this->nameE,""));
             game->ui->report->setText("对方非法落子，你赢了");
+            game->time->stop();
             game->ui->report->show();
             this->havesend_sui_op=true;
             color=0;
@@ -228,6 +229,7 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
         if(zz==false||rr==false) {
             this->havesend_sui_op=true;
                 game->ui->report->setText("对方非法落子，你赢了");
+            game->time->stop();
             game->ui->report->show();
             this->server->send(lastOne,NetworkData(OPCODE::SUICIDE_END_OP,this->nameE,""));
             color=0;
@@ -250,6 +252,7 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
     case OPCODE::SUICIDE_END_OP:
         info = time + " " + "sender" + " " +"SUICIDE_END_OP "+data.data1+ " "+data.data2+"\n";
         if(!havesend_sui_op) {
+            this->server->send(lastOne,NetworkData(OPCODE::SUICIDE_END_OP,this->nameE,""));
             received_suicide_end_op=true;
             havesend_sui_op=true;
             QFile file("daily.txt");
@@ -257,15 +260,20 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
             //qDebug() << "Failed to open file";
             return;
             }
-
             QTextStream out(&file);
             out<<info;
             file.close();
             this->server->send(lastOne,NetworkData(OPCODE::SUICIDE_END_OP,this->nameE,""));
         }
-
+        if(havesend_sui_op==true) {
+            game->ui->report->setText("对方非法落子，你赢了");
+            game->time->stop();
+            game->ui->report->show();
+            color=0;
+        }
         if(received_suicide_end_op==true) {
             game->ui->report->setText("您非法落子，寄了");
+            game->time->stop();
             game->ui->report->show();
             color=0;
         }
@@ -308,7 +316,7 @@ void netting::receieveDataFromServer(NetworkData data)
     qDebug()<<"Client get a data: "<<data.encode();
     this->ui->clientGetEdit->setText(data.data1);
     qDebug()<<"qwq"<<(data.op==OPCODE::READY_OP);
-
+    //时间和信息
     QDateTime current;
     QString time = current.currentDateTime().toString("MMM dd hh:mm::ss");
     QString info = time + " " + "Opponent" + "\n" + data.data1;
@@ -419,6 +427,7 @@ void netting::receieveDataFromServer(NetworkData data)
             this->havesend_sui_op=true;
             this->socket->send(NetworkData(OPCODE::SUICIDE_END_OP,this->nameE,""));
             game->ui->report->setText("对方非法落子，你赢了");
+            game->time->stop();
             game->ui->report->show();
             color=0;
             return;
@@ -443,6 +452,7 @@ void netting::receieveDataFromServer(NetworkData data)
             this->havesend_sui_op=true;
             this->socket->send(NetworkData(OPCODE::SUICIDE_END_OP,this->nameE,""));
             game->ui->report->setText("对方非法落子，你赢了");
+            game->time->stop();
             game->ui->report->show();
             color=0;
             return ;
@@ -471,11 +481,13 @@ void netting::receieveDataFromServer(NetworkData data)
         }
         if(havesend_sui_op==true) {
             game->ui->report->setText("对方非法落子，你赢了");
+            game->time->stop();
             game->ui->report->show();
             color=0;
         }
         if(received_suicide_end_op==true) {
             game->ui->report->setText("您非法落子，寄了");
+            game->time->stop();
             game->ui->report->show();
             color=0;
         }
