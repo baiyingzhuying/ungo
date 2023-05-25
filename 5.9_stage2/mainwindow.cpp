@@ -54,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->ui->restart->hide();//隐藏重开按钮
     this->ui->reproduce->hide();//隐藏重现按钮
     this->ui->report->hide();
+    hideall();
     connect(time,&QTimer::timeout,this,&MainWindow::on_time);//开始倒计时
     connect(this->ui->quitButton,&QPushButton::clicked,this,&MainWindow::yougiveup);//认输按钮
     connect(this->ui->startButton,&QPushButton::clicked,this,&MainWindow::start);//开始按钮
@@ -64,6 +65,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ww->ui->sure,&QPushButton::clicked,this,&MainWindow::time_set);
     connect(this->ui->AI_start,&QPushButton::clicked,this,&MainWindow::inite);//这样我们就实现了信息的传递
     connect(this->ui->net_setting,&QPushButton::clicked,this,&MainWindow::net_set);
+    connect(this->ui->showing,&QPushButton::clicked,this,&MainWindow::bofang);
+    connect(this->ui->last,&QPushButton::clicked,this,&MainWindow::last);
+    connect(this->ui->next,&QPushButton::clicked,this,&MainWindow::next);
+    connect(this->ui->stop,&QPushButton::clicked,this,&MainWindow::zanting);
+    connect(this->ui->ensure,&QPushButton::clicked,this,&MainWindow::sure);
     //    QStatusBar *statusBar = new QStatusBar(this);
     //    setStatusBar(statusBar);
     //    QSoundEffect * BGM=new QSoundEffect;
@@ -154,23 +160,6 @@ void MainWindow::DrawItems() //画个棋子
                 if(!reproduced&&pt==lastMove) {
                     painter.setBrush(Qt::red);
                     painter.drawEllipse(ptCenter,WIDTH*25/100,HEIGHT*25/100);//标记上一个落子
-                }
-                if(reproduced){//重现的代码
-                    if(m_steps[i][j]>0) {
-                        painter.setPen(Qt::red);
-                        QFont font=painter.font();
-                        font.setPointSize(14);
-                        painter.setFont(font);
-                        QString stepStr=QString::number(m_steps[i][j]);
-                        //显示第几步
-                        if(m_steps[i][j]<10){
-                            QPoint ptText = ptCenter - QPoint(WIDTH * 10/100, -HEIGHT * 10/100);
-                            painter.drawText(ptText, stepStr);
-                        }else {
-                            QPoint ptText = ptCenter - QPoint(WIDTH * 15/100, -HEIGHT * 10/100);
-                            painter.drawText(ptText, stepStr);
-                        }
-                    }
                 }
                 //            painter.setBrush(Qt::NoBrush);
                 //            painter.setPen(Qt::NoPen);
@@ -716,6 +705,7 @@ bool MainWindow::restarted() {//重开
     }
 }
 void MainWindow::restat() {//重开的模块化
+    steps_total=0;
     this->ui->restart->show();
     this->ui->reproduce->show();
     this->ui->setbutton->show();
@@ -744,9 +734,10 @@ bool MainWindow::save() {//存储程序
     //qDebug() << "Current working directory: " << currentPath;
     return true;
 }
-
+//现在我希望实现播放，暂停，上一步，下一步，到第几步的功能，那么我应该一次读入所有的，然后在复盘程序中进行操作
 bool MainWindow::read_in() {//复盘程序
     reproduced=true;
+    showall();
     this->lb->hide();
     this->ui->report->hide();
     QFile file("item.txt");
@@ -783,9 +774,11 @@ bool MainWindow::read_in() {//复盘程序
             m_items[x][y]=2;
         }
         m_steps[x][y]=num;
+        saving.push_back(node{m_items[x][y],x,y,num});//这里使用了动态数组来存储、后续再优化前面的
         //qDebug()<<x<<y<<m_steps[x][y];
         num++;
     }
+    memset(m_items,0,sizeof(m_items));
     file.close();
     return true;
 }
@@ -843,4 +836,143 @@ bool MainWindow::inite() {//好，现在我们成功的把信息传过去了，�
     poss net=state->mctsSearch(state->node1,state->unionSet);
     qDebug()<<net.first<<net.second;
     return true;
+}
+void MainWindow::hideall() {
+    this->ui->ensure->hide();
+    this->ui->showing->hide();
+    this->ui->next->hide();
+    this->ui->last->hide();
+    this->ui->stop->hide();
+    this->ui->stepedit->hide();
+}
+void MainWindow::showall() {
+    this->ui->ensure->show();
+    this->ui->showing->show();
+    this->ui->next->show();
+    this->ui->last->show();
+    this->ui->stop->show();
+    this->ui->stepedit->show();
+}
+void MainWindow::bofang(){
+    if(saving[steps_total].steps==0) return;
+    // 设置定时器超时时间为2秒
+    timers->setInterval(2000);
+    // 连接定时器的超时信号到槽函数
+    connect(timers, &QTimer::timeout, this, [=]() {
+        // 在定时器超时后执行的程序
+        QPainter painter(this);
+        int s=saving[steps_total].steps;//第几步
+        int x=saving[steps_total].p_x;//位置
+        int y=saving[steps_total].p_y;
+        int c=saving[steps_total].colors;//颜色
+        if(c == 1){
+            painter.setPen(Qt::NoPen);
+            painter.setBrush(QBrush(QColor(255, 192, 203)));
+        }
+        else if(c == 2){
+            painter.setPen(Qt::NoPen);
+            painter.setBrush(QBrush(QColor(220, 208, 255)));
+        }
+        m_items[x][y]=c;
+        painter.setRenderHint(QPainter::Antialiasing);
+        QPoint ptCenter(x*WIDTH, y*HEIGHT);
+        //绘制棋子，棋子的半径为宽高的一半
+        painter.drawEllipse(ptCenter, WIDTH * 45/100, HEIGHT * 45/100);
+        painter.setBrush(QBrush(QColor(255, 255, 255)));
+        painter.drawEllipse(ptCenter, WIDTH*25/100, HEIGHT*25/100);//棋子画上去了
+        //painter.setPen(Qt::red);
+        //QFont font=painter.font();
+        //font.setPointSize(14);
+        //painter.setFont(font);
+        //QString stepStr=QString::number(s);
+        //不显示第几步
+        //if(m_steps[x][y]<10){
+        //  QPoint ptText = ptCenter - QPoint(WIDTH * 10/100, -HEIGHT * 10/100);
+        // painter.drawText(ptText, stepStr);
+        //}else {
+        //  QPoint ptText = ptCenter - QPoint(WIDTH * 15/100, -HEIGHT * 10/100);
+        //  painter.drawText(ptText, stepStr);
+        //}
+        if(saving[steps_total+1].steps!=0)
+        steps_total++;
+    });
+    timers->start();
+}
+void MainWindow::zanting(){
+    timers->stop();
+}
+void MainWindow::next(){
+    if(saving[steps_total].steps==0) return;
+    QPainter painter(this);
+    int s=saving[steps_total].steps;//第几步
+    int x=saving[steps_total].p_x;//位置
+    int y=saving[steps_total].p_y;
+    int c=saving[steps_total].colors;//颜色
+    if(c == 1){
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(QBrush(QColor(255, 192, 203)));
+    }
+    else if(c == 2){
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(QBrush(QColor(220, 208, 255)));
+    }
+    m_items[x][y]=c;
+    painter.setRenderHint(QPainter::Antialiasing);
+    QPoint ptCenter(x*WIDTH, y*HEIGHT);
+    //绘制棋子，棋子的半径为宽高的一半
+    painter.drawEllipse(ptCenter, WIDTH * 45/100, HEIGHT * 45/100);
+    painter.setBrush(QBrush(QColor(255, 255, 255)));
+    painter.drawEllipse(ptCenter, WIDTH*25/100, HEIGHT*25/100);//棋子画上去了
+    //painter.setPen(Qt::red);
+    //QFont font=painter.font();
+    //font.setPointSize(14);
+    //painter.setFont(font);
+    //QString stepStr=QString::number(s);
+    //不显示第几步
+    //if(m_steps[x][y]<10){
+    //  QPoint ptText = ptCenter - QPoint(WIDTH * 10/100, -HEIGHT * 10/100);
+    // painter.drawText(ptText, stepStr);
+    //}else {
+    //  QPoint ptText = ptCenter - QPoint(WIDTH * 15/100, -HEIGHT * 10/100);
+    //  painter.drawText(ptText, stepStr);
+    //}
+    steps_total++;
+}
+void MainWindow::last(){
+        steps_total--;
+        m_items[saving[steps_total].p_x][saving[steps_total].p_y]=0;
+}
+void MainWindow::sure(){
+        int t=this->ui->stepedit->text().toInt();
+        if(steps_total<t) {
+            for(int i=steps_total;i<=t;i++) {
+            QPainter painter(this);
+            int s=saving[i].steps;//第几步
+            int x=saving[i].p_x;//位置
+            int y=saving[i].p_y;
+            int c=saving[i].colors;//颜色
+            if(c == 1){
+                painter.setPen(Qt::NoPen);
+                painter.setBrush(QBrush(QColor(255, 192, 203)));
+            }
+            else if(c == 2){
+                painter.setPen(Qt::NoPen);
+                painter.setBrush(QBrush(QColor(220, 208, 255)));
+            }
+            m_items[x][y]=c;
+            painter.setRenderHint(QPainter::Antialiasing);
+            QPoint ptCenter(x*WIDTH, y*HEIGHT);
+            //绘制棋子，棋子的半径为宽高的一半
+            painter.drawEllipse(ptCenter, WIDTH * 45/100, HEIGHT * 45/100);
+            painter.setBrush(QBrush(QColor(255, 255, 255)));
+            painter.drawEllipse(ptCenter, WIDTH*25/100, HEIGHT*25/100);//棋子画上去了
+            }
+        }else {
+            for(int i=steps_total;i>=t;i--) {
+            int x=saving[i].p_x;//位置
+            int y=saving[i].p_y;
+            m_items[x][y]=0;
+            }
+        }
+        steps_total=t;
 }

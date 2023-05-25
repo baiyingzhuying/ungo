@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 #include<QVector>
 #include<QWidget>
+#include<vector>
 #include"item.h"
 #include <QMainWindow>
 #include<QMessageBox>
@@ -82,6 +83,8 @@ public:
         int p_y;
         int steps;
     }items[20*20];//位置，步数，颜色
+    QVector<node>saving;
+    QTimer *timers = new QTimer(this);
     int times_for_place[20][20];
     bool save();//存储
     bool read_in();//读入
@@ -94,6 +97,14 @@ public:
     bool net_set();
     bool net_pressed=false;
     bool inite();
+    void hideall();
+    void showall();
+    void bofang();
+    void zanting();
+    void next();
+    void last();
+    void sure();
+    int steps_total=0;
     qint64 timestamp=0;
     setting *ww=new setting;
     netting *net=new netting;
