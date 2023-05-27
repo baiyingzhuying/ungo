@@ -92,12 +92,11 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
     QString ptrStr = QString("0x%1").arg((quintptr)client,
                                          QT_POINTER_SIZE, 16, QChar('0'));
     this->ui->lastOneLabel->setText("LastOne: "+ptrStr);
-    this->clients.insert(client);
+    this->clients.enqueue(client);//入队
     this->ui->serverGetEdit->setText(data.data1);
     //qDebug()<<"qwq"<<(data.op==OPCODE::READY_OP);
     //qDebug()<<id<<sendid;
-    lastOne=client;
-    clients.insert(client);
+
     QDateTime current;
     QString time = current.currentDateTime().toString("MMM dd hh:mm::ss");
     QString info;
@@ -144,8 +143,10 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
         game->time_now=game->remaining_time=5;
         //qDebug()<<"ready";
         //qDebug()<<id<<sendid;
+        receive_ready_op.enqueue(data);//入队
         if(id!=sendid) {
-            if(data.data2=='w'){
+            while(!receive_ready_op.empty()){//还没空
+            if(receive_ready_op.head().data2=='w'){
                 re->ui->lineEdit->setText("对方希望执白先行，同意开始游戏吗？");
                 re->show();
                 connect(re->ui->agree,&QPushButton::clicked,this,[=](){
@@ -158,7 +159,21 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
                     real_color=1;
                     your_turn=true;
                     this->server->send(lastOne,NetworkData(OPCODE::READY_OP,this->ui->nameEdit->text(),"b"));
-
+                    //如果同意了，后面的全都发一个reject op
+                    receive_ready_op.pop_front();
+                    clients.pop_front();//现在同意的去掉
+                    while(!receive_ready_op.empty()){
+                        receive_ready_op.pop_front();
+                        this->server->send(clients.head(),NetworkData(OPCODE::READY_OP,this->ui->nameEdit->text(),"b"));
+                        clients.pop_front();
+                    }//还没空
+                });
+                connect(re->ui->disagree,&QPushButton::clicked,this,[=](){
+                    //                    Chat * chat=new Chat;
+                    re->close();
+                    this->server->send(lastOne,NetworkData(OPCODE::REJECT_OP,this->ui->nameEdit->text(),"b"));
+                    receive_ready_op.dequeue();//出队
+                    clients.dequeue();//出队
                 });
             }else if(data.data2=='b'){
                 re->ui->lineEdit->setText("对方希望执黑先行，同意开始游戏吗？");
@@ -171,13 +186,29 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
                     color=2;
                     real_color=2;
                     this->server->send(lastOne,NetworkData(OPCODE::READY_OP,this->ui->nameEdit->text(),"w"));
+                    receive_ready_op.pop_front();
+                    clients.pop_front();//现在同意的去掉
+                    while(!receive_ready_op.empty()){
+                        receive_ready_op.pop_front();
+                        this->server->send(clients.head(),NetworkData(OPCODE::READY_OP,this->ui->nameEdit->text(),"b"));
+                        clients.pop_front();
+                    }//还没空
                 });
+                connect(re->ui->disagree,&QPushButton::clicked,this,[=](){
+                    //                    Chat * chat=new Chat;
+                    re->close();
+                    this->server->send(lastOne,NetworkData(OPCODE::REJECT_OP,this->ui->nameEdit->text(),"b"));
+                    receive_ready_op.dequeue();//出队
+                    clients.dequeue();//出队
+                });
+            }
             }
         }else if(id==sendid){
             already_start=true;
 //            Chat * chat=new Chat;
             chat->show();
         }
+
         info = time + " " + "Opponent" + " " +"READY_OP "+data.data1+ " "+data.data2+"\n";
         break;
     case OPCODE::LEAVE_OP:
@@ -359,10 +390,10 @@ void netting::receieveDataFromServer(NetworkData data)
         qDebug()<<already_connected;
         //qDebug()<<"ready";
         game->time_now=game->remaining_time=5;
+
         if(id!=sendid) {
             if(data.data2=='w'){
                 re->ui->lineEdit->setText("对方希望执白先行，同意开始游戏吗？");
-
                 re->show();
                 connect(re->ui->agree,&QPushButton::clicked,this,[=](){
 //                    Chat * chat=new Chat;
@@ -375,7 +406,12 @@ void netting::receieveDataFromServer(NetworkData data)
                     real_color=1;
                     your_turn=true;
                     this->socket->send(NetworkData(OPCODE::READY_OP,this->nameE,"b"));
+                });
+                connect(re->ui->disagree,&QPushButton::clicked,this,[=](){
+                    //                    Chat * chat=new Chat;
 
+                    re->close();//不显示
+                    this->socket->send(NetworkData(OPCODE::REJECT_OP,this->ui->nameEdit->text(),"hhhhh"));//拒绝op
                 });
             }else if(data.data2=='b'){
                 re->ui->lineEdit->setText("对方希望执黑先行，同意开始游戏吗？");
@@ -390,6 +426,12 @@ void netting::receieveDataFromServer(NetworkData data)
                     this->close();
                     this->socket->send(NetworkData(OPCODE::READY_OP,this->nameE,"w"));
                 });
+                connect(re->ui->disagree,&QPushButton::clicked,this,[=](){
+                    //                    Chat * chat=new Chat;
+
+                    re->close();//不显示
+                    this->socket->send(NetworkData(OPCODE::REJECT_OP,this->ui->nameEdit->text(),"hhhhh"));//拒绝op
+                });
             }
         }else {
             already_start=true;
@@ -397,6 +439,7 @@ void netting::receieveDataFromServer(NetworkData data)
 //            Chat * chat=new Chat;
             chat->show();
         }
+
         info = time + " " + "Opponent" + " " +"READY_OP "+data.data1+ " "+data.data2+"\n";
         break;
     case OPCODE::LEAVE_OP:
@@ -462,8 +505,7 @@ void netting::receieveDataFromServer(NetworkData data)
         game->ui->quitButton->show();
         break;
     case OPCODE::REJECT_OP:
-        if(id==1) this->socket->send(NetworkData(OPCODE::REJECT_OP,this->ui->nameEdit->text(),"hhhhh"));
-        else this->server->send(lastOne,NetworkData(OPCODE::REJECT_OP,this->ui->nameEdit->text(),"hhhhh"));
+        this->socket->send(NetworkData(OPCODE::REJECT_OP,this->ui->nameEdit->text(),"hhhhh"));
         if(id!=sendid) {
             this->ui->messhow->setText(QString("Your invitation has been rejected."));
         }else {

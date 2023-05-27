@@ -6,7 +6,7 @@
 #include<QLineEdit>
 #include"chat.h"
 #include<QDateTime>
-
+#include<QQueue>
 namespace Ui{
 class netting;
 }
@@ -25,7 +25,7 @@ public:
     int PORT;
     QString nameE;
     // 客户端池，NetworkServer 有一个 QList 的，但这里我想用 set，所以又弄了一个
-    QSet<QTcpSocket*> clients;
+    QQueue<QTcpSocket*> clients;
     QLineEdit *rep;
     Ui::netting *ui;
     int id =0;
@@ -54,6 +54,7 @@ public:
     bool your_turn=false;
     Chat * chat=new Chat;
     QDateTime timee;
+    QQueue<NetworkData>receive_ready_op;
 private slots:
     void receieveData(QTcpSocket* client, NetworkData data);
     void receieveDataFromServer(NetworkData data);

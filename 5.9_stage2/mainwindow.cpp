@@ -651,6 +651,7 @@ bool MainWindow::restarted() {//重开
         this->ui->report->hide();
         jishu=1;
         reproduced=false;//不是重现的
+        hideall();
         return true;
     }else {
         QDateTime current;
@@ -701,7 +702,7 @@ bool MainWindow::restarted() {//重开
                     net->server->send(net->lastOne,NetworkData(OPCODE::READY_OP,net->nameE,"w"));}
             }
         }
-
+        hideall();
     }
 }
 void MainWindow::restat() {//重开的模块化
