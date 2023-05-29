@@ -1,0 +1,20 @@
+<RCC>
+    <qresource prefix="/leishen">
+        <file>leishen_01.wav</file>
+        <file>leishen_02.wav</file>
+        <file>leishen_03.wav</file>
+        <file>leishen_04.wav</file>
+        <file>leishen_05.wav</file>
+        <file>leishen_06.wav</file>
+        <file>leishen_07.wav</file>
+    </qresource>
+    <qresource prefix="/zhongli">
+        <file>zhongli_01.wav</file>
+        <file>zhongli_02.wav</file>
+        <file>zhongli_03.wav</file>
+        <file>zhongli_04.wav</file>
+        <file>zhongli_05.wav</file>
+        <file>zhongli_06.wav</file>
+        <file>zhongli_07.wav</file>
+    </qresource>
+</RCC>
