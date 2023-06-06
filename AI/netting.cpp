@@ -188,6 +188,16 @@ void netting::receieveData(QTcpSocket* client, NetworkData data)
 //            Chat * chat=new Chat;
             chat->show();
         }
+        for (int i = 1; i <=9; i++)
+        {
+            for (int j = 0; j <=9; j++)
+            {
+                game->m_items[i][j] = 0;
+                game->candown[i][j]=1;
+                game->value[i][j] = qMin(qAbs(i-2),qAbs(i-6))*10+qMin(qAbs(j-2),qAbs(j-6))*10;
+                if(i+j==0||i+j==8||i+j==16) game->value[i][j]++;
+            }
+        }
         info = time + " " + "Opponent" + " " +"READY_OP "+data.data1+ " "+data.data2+"\n";
         break;
     case OPCODE::LEAVE_OP:
@@ -420,6 +430,16 @@ void netting::receieveDataFromServer(NetworkData data)
             this->close();
 //            Chat * chat=new Chat;
             chat->show();
+        }
+        for (int i = 1; i <=9; i++)
+        {
+            for (int j = 0; j <=9; j++)
+            {
+                game->m_items[i][j] = 0;
+                game->candown[i][j]=1;
+                game->value[i][j] = qMin(qAbs(i-2),qAbs(i-6))*10+qMin(qAbs(j-2),qAbs(j-6))*10;
+                if(i+j==0||i+j==8||i+j==16) game->value[i][j]++;
+            }
         }
         info = time + " " + "Opponent" + " " +"READY_OP "+data.data1+ " "+data.data2+"\n";
         break;
